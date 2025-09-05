@@ -10,7 +10,7 @@ const navItems = [
     path: "/Hospital/settings",
   },
   {
-    name: "Admin Users & Security",
+    name: "Security",
     icon: Users,
     path: "/Hospital/settings/admin",
   },

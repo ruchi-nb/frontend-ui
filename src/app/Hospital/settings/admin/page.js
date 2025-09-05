@@ -2,7 +2,6 @@ import HosSidebar from "@/components/Hospital/Sidebar";
 import HosNavbar from "@/components/Hospital/Navbar";
 import SettingsHead from "@/components/settings/SettingHead";
 import SidebarNav from "@/components/settings/SidebarNav";
-import AdminUsers from "@/components/settings/AdminUsers";
 import SecuritySettings from "@/components/settings/SecuritySettings";
 
 export default function Navbar(){
@@ -21,10 +20,7 @@ export default function Navbar(){
                                 <SidebarNav />
                             </div>
                             <div className="flex-1">
-                                <div className="space-y-6">
-                                    <AdminUsers />
-                                    <SecuritySettings />
-                                </div>
+                                <SecuritySettings />
                             </div>
                         </div>
                     </div>
