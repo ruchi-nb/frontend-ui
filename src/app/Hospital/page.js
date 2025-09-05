@@ -1,6 +1,5 @@
 import HosSidebar from "@/components/Hospital/Sidebar";
 import HosNavbar from "@/components/Hospital/Navbar";
-import QuickActions from '@/components/Hospital/Dashboard/Action';
 import DashboardHeader from'@/components/Hospital/Dashboard/DashHeader';
 import SubscriptionOverview from '@/components/Hospital/Dashboard/SubsOverview';
 import UsageAlerts from '@/components/Hospital/Dashboard/Usage';
@@ -19,7 +18,6 @@ export default function Navbar(){
                         <div className="mb-8"><DashboardHeader /></div>
                         <div className="mb-8"><SubscriptionOverview /></div>
                         <div className="mb-8"><UsageAlerts /> </div>
-                        <div className="mb-8"><QuickActions /></div>
                         <div className="mb-8"><Dashboard /></div>
                     </div>
                 </main>
