@@ -51,13 +51,6 @@ const Dashboard = () => {
       title: 'HIPAA compliance audit completed successfully',
       time: '1 day ago'
     },
-    {
-      icon: 'clock',
-      iconColor: 'text-slate-600',
-      bgColor: 'bg-slate-50',
-      title: 'Scheduled maintenance completed - all systems operational',
-      time: '2 days ago'
-    }
   ];
 
   // Function to render the correct SVG icon
@@ -158,7 +151,7 @@ const Dashboard = () => {
           </div>
           
           <div className="mt-6 pt-4 border-t border-stone-200">
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-2 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold text-slate-900">1,030</div>
                 <div className="text-xs text-slate-500">Total Consultations</div>
@@ -166,10 +159,6 @@ const Dashboard = () => {
               <div>
                 <div className="text-2xl font-bold text-slate-900">24</div>
                 <div className="text-xs text-slate-500">Active Doctors</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-slate-900">4.8</div>
-                <div className="text-xs text-slate-500">Avg Rating</div>
               </div>
             </div>
           </div>
@@ -194,10 +183,6 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-          
-          <button className="mt-4 text-sm text-teal-600 hover:text-teal-700 font-medium">
-            View all activity →
-          </button>
         </div>
       </div>
     </div>
