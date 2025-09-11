@@ -1,3 +1,5 @@
+// frontend-ui/src/app/landing/page.js
+"use client";
 import Navbar from "@/components/Landing/Navbar";
 import HeroSection from "@/components/Landing/HeroSection";
 import HowItWorks from "@/components/Landing/HowItWorks";
@@ -13,7 +15,7 @@ export default function Home({ onLogin }) {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
       <Navbar onLogin={onLogin} />
       <HeroSection />
-      <HowItWorks />
+      <HowItWorks onLogin={onLogin} />
       <Benefits />
       <SecondCTA />
       <AboutSection />

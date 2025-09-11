@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 const HealthcarePartners = () => {
   const [formData, setFormData] = useState({
@@ -14,16 +14,72 @@ const HealthcarePartners = () => {
     consent: false
   });
 
+  const [errors, setErrors] = useState({});
+
+  // Validation functions
+  const isTextValid = (value) => /^[A-Za-z\s'-]+$/.test(value);
+  const isMessageValid = (value) => /^[A-Za-z0-9\s]+$/.test(value); // no symbols
+  const isEmailValid = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  const isPhoneValid = (value) => /^[0-9]+$/.test(value);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    let error;
+    if ((name === "name" || name === "affiliation") && value && !isTextValid(value)) {
+      error = "No numbers or special characters allowed.";
+    } else if (name === "message" && value && !isMessageValid(value)) {
+      error = "No symbols or parentheses allowed.";
+    } else if (name === "email" && value && !isEmailValid(value)) {
+      error = "Enter a valid email address.";
+    } else if (name === "phone" && value && !isPhoneValid(value)) {
+      error = "Phone must contain only numbers.";
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+
+    setErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name || !isTextValid(formData.name)) {
+      newErrors.name = "Name must not contain numbers or special characters.";
+    }
+    if (!formData.email || !isEmailValid(formData.email)) {
+      newErrors.email = "Valid email is required.";
+    }
+    if (!formData.phone || !isPhoneValid(formData.phone)) {
+      newErrors.phone = "Phone must contain only numbers.";
+    }
+    if (!formData.role) {
+      newErrors.role = "Role is required.";
+    }
+    if (!formData.message || !isMessageValid(formData.message)) {
+      newErrors.message = "Message is required and must not contain symbols or parentheses.";
+    }
+    if (formData.affiliation && !isTextValid(formData.affiliation)) {
+      newErrors.affiliation = "Affiliation must not contain numbers or special characters.";
+    }
+    if (!formData.consent) {
+      newErrors.consent = "Consent is required.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     alert('Thank you for your interest in MediCare! We will contact you within 24 hours.');
     setFormData({
       name: "",
@@ -35,6 +91,7 @@ const HealthcarePartners = () => {
       message: "",
       consent: false
     });
+    setErrors({});
   };
 
   // Animation on scroll functionality
@@ -199,13 +256,14 @@ const HealthcarePartners = () => {
                   </svg>
                   <input 
                     placeholder="Full Name" 
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600" 
+                    className={`w-full pl-10 pr-4 py-3 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600`} 
                     required 
                     type="text" 
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
                   />
+                  {errors.name && <span className="text-red-500 text-xs absolute left-0 -bottom-5">{errors.name}</span>}
                 </div>
                 
                 <div className="relative">
@@ -215,13 +273,14 @@ const HealthcarePartners = () => {
                   </svg>
                   <input 
                     placeholder="Email Address" 
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600" 
+                    className={`w-full pl-10 pr-4 py-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600`} 
                     required 
                     type="email" 
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
                   />
+                  {errors.email && <span className="text-red-500 text-xs absolute left-0 -bottom-5">{errors.email}</span>}
                 </div>
                 
                 <div className="relative">
@@ -230,13 +289,14 @@ const HealthcarePartners = () => {
                   </svg>
                   <input 
                     placeholder="Phone Number" 
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600" 
+                    className={`w-full pl-10 pr-4 py-3 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600`} 
                     required 
                     type="tel" 
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
                   />
+                  {errors.phone && <span className="text-red-500 text-xs absolute left-0 -bottom-5">{errors.phone}</span>}
                 </div>
                 
                 <div className="relative">
@@ -255,27 +315,31 @@ const HealthcarePartners = () => {
                   </svg>
                   <input 
                     placeholder="Hospital/Clinic Affiliation" 
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600" 
+                    className={`w-full pl-10 pr-4 py-3 border ${errors.affiliation ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600`} 
                     required 
                     type="text" 
                     name="affiliation"
                     value={formData.affiliation}
                     onChange={handleInputChange}
                   />
+                  {errors.affiliation && <span className="text-red-500 text-xs absolute left-0 -bottom-5">{errors.affiliation}</span>}
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <select 
-                    name="role" 
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600" 
-                    required
-                    value={formData.role}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">Select Role *</option>
-                    <option value="doctor">Doctor</option>
-                    <option value="hospital-administrator">Hospital Administrator</option>
-                  </select>
+                  <div>
+                    <select 
+                      name="role" 
+                      className={`w-full px-4 py-3 border ${errors.role ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-gray-600`} 
+                      required
+                      value={formData.role}
+                      onChange={handleInputChange}
+                    >
+                      <option value="">Select Role *</option>
+                      <option value="doctor">Doctor</option>
+                      <option value="hospital-administrator">Hospital Administrator</option>
+                    </select>
+                    {errors.role && <span className="text-red-500 text-xs">{errors.role}</span>}
+                  </div>
                   
                   <div className="relative">
                     <select 
@@ -301,14 +365,17 @@ const HealthcarePartners = () => {
                   </div>
                 </div>
                 
-                <textarea 
-                  name="message" 
-                  placeholder="Tell us about your interest in joining MediCare and how you'd like to contribute to our mission..." 
-                  rows="4" 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-colors resize-none text-gray-600"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                ></textarea>
+                <div className="relative">
+                  <textarea 
+                    name="message" 
+                    placeholder="Tell us about your interest in joining MediCare and how you'd like to contribute to our mission..." 
+                    rows="4" 
+                    className={`w-full px-4 py-3 border ${errors.message ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:border-blue-500 transition-colors resize-none text-gray-600`}
+                    value={formData.message}
+                    onChange={handleInputChange}
+                  ></textarea>
+                  {errors.message && <span className="text-red-500 text-xs absolute left-0 -bottom-5">{errors.message}</span>}
+                </div>
                 
                 <div className="flex items-start space-x-2">
                   <input 
@@ -321,6 +388,7 @@ const HealthcarePartners = () => {
                   />
                   <span className="text-sm text-gray-600">I agree to be contacted by MediCare regarding partnership opportunities and confirm that all provided information is accurate.</span>
                 </div>
+                {errors.consent && <span className="text-red-500 text-xs">{errors.consent}</span>}
                 
                 <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2">
                   <span>Submit Application</span>

@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -15,25 +16,107 @@ export default function RegisterModal({ kind, open, onClose, onRegisterDoctor })
     agree: false,
   });
 
+  const [errors, setErrors] = useState({});
+
   if (!open) return null;
 
-  const submitLabel = kind === "patient" 
-    ? "Create Patient Account" 
+  const submitLabel = kind === "patient"
+    ? "Create Patient Account"
     : "Create Doctor Account";
 
-  const handleGoogleSignUp = () => {
-    // If an onRegisterDoctor prop is provided, use it
-    if (onRegisterDoctor) {
-      onRegisterDoctor();
-    } else {
-      // Otherwise, navigate to the doctor portal
-      router.push("/doctorportal");
+  // Validation functions
+  const isTextValid = (value) => /^[A-Za-z\s'-]+$/.test(value);
+  const isEmailValid = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  const isPhoneValid = (value) => /^[0-9]+$/.test(value);
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    let newValue = value;
+    let error;
+
+    // Real-time filtering
+    if ((name === "firstName" || name === "lastName") && value) {
+      newValue = value.replace(/[^A-Za-z\s'-]/g, ""); // block numbers & symbols
+      if (!isTextValid(newValue)) error = "No numbers or special characters allowed.";
     }
+
+    if (name === "phone" && value) {
+      newValue = value.replace(/[^0-9]/g, ""); // block letters & symbols
+      if (!isPhoneValid(newValue)) error = "Phone must contain only numbers.";
+    }
+
+    if (name === "email" && value && !isEmailValid(value)) {
+      error = "Enter a valid email address.";
+    }
+
+    if (name === "doctorLicense" && kind === "doctor" && !newValue) {
+      error = "Doctor license number is required.";
+    }
+
+    if (name === "dob" && !newValue) {
+      error = "Date of birth is required.";
+    }
+
+    if (name === "address" && !newValue) {
+      error = "Address is required.";
+    }
+
+    if (name === "agree" && !checked) {
+      error = "You must agree to the terms.";
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : newValue,
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.firstName) newErrors.firstName = "First name is required.";
+    if (!formData.lastName) newErrors.lastName = "Last name is required.";
+    if (!formData.email || !isEmailValid(formData.email)) newErrors.email = "Valid email is required.";
+    if (!formData.phone || !isPhoneValid(formData.phone)) newErrors.phone = "Phone is required and must contain only numbers.";
+    if (!formData.dob) newErrors.dob = "Date of birth is required.";
+    if (!formData.address) newErrors.address = "Address is required.";
+    if (kind === "doctor" && !formData.doctorLicense) newErrors.doctorLicense = "Doctor license number is required.";
+    if (!formData.agree) newErrors.agree = "You must agree to the terms.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (!validateForm()) return;
+
+    alert(`${submitLabel} successful!`);
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      dob: "",
+      address: "",
+      doctorLicense: "",
+      agree: false,
+    });
+    setErrors({});
     onClose();
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleGoogleSignUp = () => {
+    if (onRegisterDoctor) {
+      onRegisterDoctor();
+    } else {
+      router.push("/doctorportal");
+    }
+    onClose();
   };
 
   return (
@@ -48,7 +131,7 @@ export default function RegisterModal({ kind, open, onClose, onRegisterDoctor })
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-2xl font-bold text-gray-900">
-              {kind === "patient" ? "Create Patient Account" : "Create Doctor Account"}
+              {submitLabel}
             </h3>
             <button 
               onClick={onClose} 
@@ -65,79 +148,102 @@ export default function RegisterModal({ kind, open, onClose, onRegisterDoctor })
           </p>
         </div>
 
-        {/* Form */}
         <div className="grid grid-cols-1 gap-4 mb-6">
           <input
+            name="firstName"
             placeholder="First Name"
             value={formData.firstName}
-            onChange={(e) => handleInputChange("firstName", e.target.value)}
-            className="border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={handleInputChange}
+            className={`border px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
           />
+          {errors.firstName && <span className="text-red-500 text-xs">{errors.firstName}</span>}
+
           <input
+            name="lastName"
             placeholder="Last Name"
             value={formData.lastName}
-            onChange={(e) => handleInputChange("lastName", e.target.value)}
-            className="border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={handleInputChange}
+            className={`border px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
           />
+          {errors.lastName && <span className="text-red-500 text-xs">{errors.lastName}</span>}
+
           <input
+            name="email"
             type="email"
             placeholder="Email"
             value={formData.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-            className="border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={handleInputChange}
+            className={`border px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
           />
+          {errors.email && <span className="text-red-500 text-xs">{errors.email}</span>}
+
           <input
+            name="phone"
             type="tel"
             placeholder="Phone"
             value={formData.phone}
-            onChange={(e) => handleInputChange("phone", e.target.value)}
-            className="border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={handleInputChange}
+            className={`border px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
           />
+          {errors.phone && <span className="text-red-500 text-xs">{errors.phone}</span>}
+
           <input
+            name="dob"
             type="date"
             placeholder="Date of Birth"
             value={formData.dob}
-            onChange={(e) => handleInputChange("dob", e.target.value)}
-            className="border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={handleInputChange}
+            className={`border px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none ${errors.dob ? 'border-red-500' : 'border-gray-300'}`}
           />
+          {errors.dob && <span className="text-red-500 text-xs">{errors.dob}</span>}
+
           <input
+            name="address"
             placeholder="Address"
             value={formData.address}
-            onChange={(e) => handleInputChange("address", e.target.value)}
-            className="border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={handleInputChange}
+            className={`border px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none ${errors.address ? 'border-red-500' : 'border-gray-300'}`}
           />
+          {errors.address && <span className="text-red-500 text-xs">{errors.address}</span>}
+
           {kind === "doctor" && (
-            <input
-              placeholder="Doctor License Number"
-              value={formData.doctorLicense}
-              onChange={(e) => handleInputChange("doctorLicense", e.target.value)}
-              className="border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+            <>
+              <input
+                name="doctorLicense"
+                placeholder="Doctor License Number"
+                value={formData.doctorLicense}
+                onChange={handleInputChange}
+                className={`border px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none ${errors.doctorLicense ? 'border-red-500' : 'border-gray-300'}`}
+              />
+              {errors.doctorLicense && <span className="text-red-500 text-xs">{errors.doctorLicense}</span>}
+            </>
           )}
+
           <label className="flex items-start gap-2 text-sm text-gray-700 cursor-pointer">
             <input
+              name="agree"
               type="checkbox"
               checked={formData.agree}
-              onChange={(e) => handleInputChange("agree", e.target.checked)}
+              onChange={handleInputChange}
               className="mt-1"
             />
             <span>I agree to the Terms of Service and Privacy Policy</span>
           </label>
+          {errors.agree && <span className="text-red-500 text-xs">{errors.agree}</span>}
         </div>
 
-        <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full py-3 font-semibold hover:shadow-lg transition-all duration-300 mb-3">
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full py-3 font-semibold hover:shadow-lg transition-all duration-300 mb-3"
+        >
           {submitLabel}
         </button>
 
-        {/* Google sign up button with navigation */}
         <button
           onClick={handleGoogleSignUp}
           className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-full py-3 font-medium hover:shadow-md transition-all duration-300"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4"/>
-          </svg>
-          <span className="text-gray-800">Or sign up with Google instead</span>
+          Google Sign Up
         </button>
       </div>
     </div>

@@ -1,6 +1,8 @@
+// frontend-ui/src/components/Landing/HowItWorks.js
 "use client";
 
 import { useEffect, useState } from "react";
+import LoginPopup from "@/components/Landing/LoginPopUp";
 
 const steps = [
   {
@@ -100,6 +102,7 @@ const steps = [
 
 export default function HowItWorks() {
   const [mounted, setMounted] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -147,13 +150,22 @@ export default function HowItWorks() {
         </div>
 
         <div className="text-center mt-16">
-          <div className="inline-flex items-center space-x-4 bg-white rounded-full px-8 py-4 shadow-lg">
-            <span className="text-gray-700 font-medium">Ready to get started?</span>
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              Start Call Now
-            </button>
-          </div>
+        <div className="inline-flex items-center space-x-4 bg-white rounded-full px-8 py-4 shadow-lg">
+          <span className="text-gray-700 font-medium">Ready to get started?</span>
+          <button
+            onClick={() => setIsLoginOpen(true)}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+          >
+            Start Call Now
+          </button>
         </div>
+      </div>
+
+      {/* Login Popup */}
+      <LoginPopup
+        open={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+      />
       </div>
     </section>
   );
