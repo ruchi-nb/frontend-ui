@@ -124,17 +124,11 @@ const HealthcarePartners = () => {
   }, []);
 
   return (
-    <section className="py-24 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <section className="py-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16 animate-on-scroll" data-animation="fade-in-up">
           <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-stethoscope w-4 h-4" aria-hidden="true">
-              <path d="M11 2v2"></path>
-              <path d="M5 2v2"></path>
-              <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"></path>
-              <path d="M8 15a6 6 0 0 0 12 0v-3"></path>
-              <circle cx="20" cy="10" r="2"></circle>
-            </svg>
+            
             <span>Join Our Network</span>
           </div>
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Calling All <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Healthcare Heroes</span></h2>
@@ -150,7 +144,7 @@ const HealthcarePartners = () => {
             
             <div className="space-y-6">
               <div className="flex items-start space-x-4 group">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users w-6 h-6 text-white" aria-hidden="true">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                     <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
@@ -165,7 +159,7 @@ const HealthcarePartners = () => {
               </div>
               
               <div className="flex items-start space-x-4 group">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-building w-6 h-6 text-white" aria-hidden="true">
                     <rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect>
                     <path d="M9 22v-4h6v4"></path>
@@ -187,7 +181,7 @@ const HealthcarePartners = () => {
               </div>
               
               <div className="flex items-start space-x-4 group">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-award w-6 h-6 text-white" aria-hidden="true">
                     <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.810-.469l1.514-8.526"></path>
                     <circle cx="12" cy="8" r="6"></circle>
@@ -200,7 +194,7 @@ const HealthcarePartners = () => {
               </div>
             </div>
             
-            <div className="bg-white rounded-2xl p-8 shadow-lg">
+            <div className="bg-white rounded-2xl p-8 shadow-lg hidden lg-block">
               <h4 className="text-lg font-semibold text-gray-900 mb-6">Join Our Growing Network</h4>
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
@@ -208,23 +202,23 @@ const HealthcarePartners = () => {
                   <div className="text-gray-600 text-sm">Active Doctors</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600 mb-1">50K+</div>
+                  <div className="text-3xl font-bold text-blue-600 mb-1">50K+</div>
                   <div className="text-gray-600 text-sm">Patients Served</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600 mb-1">200+</div>
+                  <div className="text-3xl font-bold text-blue-600 mb-1">200+</div>
                   <div className="text-gray-600 text-sm">Partner Hospitals</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-orange-600 mb-1">24/7</div>
+                  <div className="text-3xl font-bold text-blue-600 mb-1">24/7</div>
                   <div className="text-gray-600 text-sm">Support Available</div>
                 </div>
               </div>
             </div>
             
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 hidden lg:block">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">Dr</div>
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold">Dr</div>
                 <div>
                   <p className="text-gray-700 italic mb-3">"MediCare has revolutionized my practice. I can now reach patients globally while maintaining the highest quality of care. The platform is intuitive and the support is exceptional."</p>
                   <div className="text-sm">
@@ -239,7 +233,7 @@ const HealthcarePartners = () => {
           <div className="animate-on-scroll" data-animation="fade-in-right" data-delay="500">
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-heart w-8 h-8 text-white" aria-hidden="true">
                     <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
                   </svg>
@@ -348,7 +342,7 @@ const HealthcarePartners = () => {
                       value={formData.specialty}
                       onChange={handleInputChange}
                     >
-                      <option value="">Select Specialty (Optional)</option>
+                      <option value="">Select Specialty </option>
                       <option value="cardiology">Cardiology</option>
                       <option value="neurology">Neurology</option>
                       <option value="ophthalmology">Ophthalmology</option>

@@ -9,42 +9,60 @@ export default function LoginPopup({ open, onClose, onLogin, onRegisterDoctor })
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} className="relative z-50">
+      <Dialog open={open} onClose={onClose} className="relative z-50 font-gotham">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel className="mx-auto max-w-md w-full bg-white rounded-2xl shadow-xl p-8 relative">
-            <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">✕</button>
-
-            <DialogTitle className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</DialogTitle>
-            <p className="text-gray-600 mb-6">Sign in with Google to access your dashboard</p>
-
+          <DialogPanel className="mx-auto max-w-md w-full bg-white rounded-2xl shadow-lg border border-[#c8c8c8] p-8 relative">
+            {/* Close button */}
             <button
-              onClick={() => {
-                onLogin();  // Trigger login in page.js
-                onClose();  // Close popup
-              }}
-              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all mb-4"
+              onClick={onClose}
+              className="absolute top-4 right-4 text-[#767676] hover:text-[#000] text-xl"
             >
-              <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
-              <span>Continue with Google Account</span>
+              ✕
             </button>
 
-            <p className="text-xs text-gray-500 text-center mb-6">
-              By continuing, you agree to our{" "}
-              <a href="#" className="text-blue-600 underline">Terms of Service</a>{" "}
-              and{" "}
-              <a href="#" className="text-blue-600 underline">Privacy Policy</a>
+            {/* Heading */}
+            <DialogTitle className="text-[2.5rem] font-normal font-poppins text-[#000] mb-4 leading-snug">
+              Welcome Back
+            </DialogTitle>
+            <p className="text-[1rem] font-light text-[#767676] mb-8 leading-relaxed">
+              Sign in with Google to access your dashboard
             </p>
 
-            {/* New here link */}
-            <p className="text-center text-sm text-gray-700 mt-4">
+            {/* Google Login Button */}
+            <button
+              onClick={() => {
+                onLogin();
+                onClose();
+              }}
+              className="w-full flex items-center justify-center gap-3 border border-[#c8c8c8] text-black px-6 py-3 rounded-full hover:bg-gradient-to-r hover:from-[#004dd6] hover:to-[#3d85c6] hover:text-white transition-all mb-6"
+            >
+              <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
+              <span className="font-medium">Continue with Google Account</span>
+            </button>
+
+            {/* Terms */}
+            <p className="text-xs text-[#767676] text-center mb-6">
+              By continuing, you agree to our{" "}
+              <a href="#" className="text-[#004dd6] underline">
+                Terms of Service
+              </a>{" "}
+              and{" "}
+              <a href="#" className="text-[#004dd6] underline">
+                Privacy Policy
+              </a>
+              .
+            </p>
+
+            {/* Register CTA */}
+            <p className="text-center text-sm text-[#000]">
               New here?{" "}
               <button
                 onClick={() => {
                   setIsRegisterOpen(true);
-                  onClose(); // optionally close login popup
+                  onClose();
                 }}
-                className="text-blue-600 underline font-medium"
+                className="text-[#004dd6] underline font-medium"
               >
                 Register an account
               </button>
@@ -55,10 +73,10 @@ export default function LoginPopup({ open, onClose, onLogin, onRegisterDoctor })
 
       {/* Register Modal */}
       <RegisterModal
-        kind="patient" // you can make this dynamic if needed
+        kind="patient"
         open={isRegisterOpen}
         onClose={() => setIsRegisterOpen(false)}
-        onRegisterDoctor={onRegisterDoctor} // pass if registering a doctor
+        onRegisterDoctor={onRegisterDoctor}
       />
     </>
   );

@@ -1,14 +1,30 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Comfortaa, JetBrains_Mono, Playfair_Display, Poppins } from "next/font/google";
+import "remixicon/fonts/remixicon.css";
 import "./globals.css";
+import "./landing.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const comfortaa = Comfortaa({
+  variable: "--font-comfortaa",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "700"], // light → bold
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "900"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["200", "400", "600", "700"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"], // adjust as needed
 });
 
 export const metadata = {
@@ -20,7 +36,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${comfortaa.variable} ${playfair.variable} ${jetbrainsMono.variable} ${poppins.variable} antialiased`}
       >
         {children}
       </body>

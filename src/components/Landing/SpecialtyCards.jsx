@@ -11,7 +11,7 @@ const Specialties = () => {
     {
       id: 1,
       title: "Pediatrics",
-      icon: "👶",
+      icon: <i className="ri-parent-line"></i>,
       description: "Comprehensive healthcare for infants, children, and adolescents.",
       doctors: 52,
       gradient: "from-blue-400 to-blue-600",
@@ -21,70 +21,70 @@ const Specialties = () => {
     {
       id: 2,
       title: "Cardiology",
-      icon: "❤️",
+      icon: <i className="ri-heart-2-fill"></i>,
       description: "Expert care for heart and cardiovascular conditions.",
       doctors: 38,
-      gradient: "from-red-400 to-red-600",
+      gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our cardiologists specialize in diagnosing and treating diseases of the heart and blood vessels, helping patients maintain cardiovascular health.",
       conditions: ["Heart Disease", "High Blood Pressure", "Arrhythmias", "Heart Failure"]
     },
     {
       id: 3,
       title: "Dermatology",
-      icon: "🔬",
+      icon: <i className="ri-microscope-line"></i>,
       description: "Skin, hair, and nail care from certified dermatologists.",
       doctors: 27,
-      gradient: "from-purple-400 to-purple-600",
+      gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our dermatologists diagnose and treat conditions affecting the skin, hair, and nails, providing both medical and cosmetic solutions.",
       conditions: ["Acne", "Eczema", "Psoriasis", "Skin Cancer"]
     },
     {
       id: 4,
       title: "Orthopedics",
-      icon: "🦴",
+      icon: <i className="ri-wheelchair-line"></i>,
       description: "Treatment for musculoskeletal injuries and conditions.",
       doctors: 43,
-      gradient: "from-green-400 to-green-600",
+      gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our orthopedic specialists focus on the diagnosis and treatment of disorders of the bones, joints, ligaments, tendons, and muscles.",
       conditions: ["Arthritis", "Fractures", "Sports Injuries", "Joint Pain"]
     },
     {
       id: 5,
       title: "Neurology",
-      icon: "🧠",
+      icon: <i className="ri-brain-line"></i>,
       description: "Expert care for brain and nervous system disorders.",
       doctors: 31,
-      gradient: "from-indigo-400 to-indigo-600",
+      gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our neurologists specialize in treating disorders of the nervous system, including the brain, spinal cord, nerves, and muscles.",
       conditions: ["Migraines", "Epilepsy", "Stroke", "Multiple Sclerosis"]
     },
     {
       id: 6,
       title: "Ophthalmology",
-      icon: "👁️",
+      icon: <i className="ri-eye-2-line"></i>,
       description: "Comprehensive eye care and vision services.",
       doctors: 29,
-      gradient: "from-cyan-400 to-cyan-600",
+      gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our ophthalmologists provide medical and surgical eye care, treating diseases and conditions affecting vision and eye health.",
       conditions: ["Cataracts", "Glaucoma", "Macular Degeneration", "Diabetic Retinopathy"]
     },
     {
       id: 7,
       title: "Psychiatry",
-      icon: "🧠",
+      icon: <i className="ri-mental-health-line"></i>,
       description: "Mental health care and psychological support.",
       doctors: 41,
-      gradient: "from-pink-400 to-pink-600",
+      gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our psychiatrists diagnose and treat mental health disorders through therapy, medication management, and other interventions.",
       conditions: ["Depression", "Anxiety", "Bipolar Disorder", "PTSD"]
     },
     {
       id: 8,
       title: "Endocrinology",
-      icon: "⚖️",
+      icon: <i className="ri-flask-line"></i>,
       description: "Specialized care for hormone-related conditions.",
       doctors: 24,
-      gradient: "from-yellow-400 to-yellow-600",
+      gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our endocrinologists specialize in treating disorders of the endocrine system, including diabetes, thyroid issues, and hormonal imbalances.",
       conditions: ["Diabetes", "Thyroid Disorders", "Osteoporosis", "Hormonal Imbalances"]
     }
@@ -136,29 +136,11 @@ const Specialties = () => {
   }, [selected]);
 
   return (
-    <section id="specialties" className="py-24 bg-white">
+    <section id="specialties" className="py-8 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-stethoscope w-4 h-4"
-              aria-hidden="true"
-            >
-              <path d="M11 2v2"></path>
-              <path d="M5 2v2"></path>
-              <path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1"></path>
-              <path d="M8 15a6 6 0 0 0 12 0v-3"></path>
-              <circle cx="20" cy="10" r="2"></circle>
-            </svg>
+            
             <span>Medical Specialties</span>
           </div>
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">

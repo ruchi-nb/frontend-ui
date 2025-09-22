@@ -1,26 +1,56 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+@import 'tailwindcss';
 
+/* global.css */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Colors */
+  --color-primary: #004dd6;
+  --color-secondary: #3d85c6;
+  --color-dark: #000;
+  --color-muted: #767676;
+  --color-light: #c8c8c8;
+  --color-danger: #9f0202;
+
+  /* Typography */
+  --font-heading: "Poppins", sans-serif;
+  --font-body: "GothamBook", sans-serif;
+
+  --text-h2: 3rem; /* 40px */
+  --text-h4: 1.625rem; /* 26px */
+  --text-p: 1rem; /* 16px */
+
+  /* Spacing */
+  --space-section: 4rem;
+  --space-heading: 2rem;
+  --space-subheading: 1rem;
+
+  /* Line height */
+  --line-height: 1.6;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Apply defaults */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  line-height: var(--line-height);
+  color: var(--color-dark);
+}
+
+/* Utility classes */
+.h2 {
+  font-family: var(--font-heading);
+  font-size: var(--text-h2);
+  font-weight: 500;
+}
+
+.h4 {
+  font-family: var(--font-body);
+  font-size: var(--text-h4);
+  font-weight: 400;
+}
+
+.p {
+  font-family: var(--font-body);
+  font-size: var(--text-p);
+  font-weight: 300;
+  color: var(--color-muted);
 }

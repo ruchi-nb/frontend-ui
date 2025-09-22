@@ -1,172 +1,107 @@
 // frontend-ui/src/components/Landing/HowItWorks.js
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import LoginPopup from "@/components/Landing/LoginPopUp";
+import { Search, UserRoundSearch, Video, FilePlus, Sparkles, ArrowRight } from "lucide-react";
+import InvertedGradientButton from "../common/InvertedGradientButton";
 
 const steps = [
   {
     title: "Register Your Account",
     description:
       "Log in to get access to our network of certified healthcare professionals.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-8 h-8 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="m21 21-4.34-4.34" />
-        <circle cx="11" cy="11" r="8" />
-      </svg>
-    ),
-    gradient: "from-blue-500 to-blue-600",
-    lineGradient: "from-gray-300 to-blue-500",
+    icon: <Search className="w-8 h-8 text-[var(--color-secondary)]" />,
   },
   {
     title: "Find Your Doctor",
     description:
       "Browse through our network of certified healthcare professionals and find the right specialist for your needs.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-8 h-8 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M8 2v4" />
-        <path d="M16 2v4" />
-        <rect width="18" height="18" x="3" y="4" rx="2" />
-        <path d="M3 10h18" />
-      </svg>
-    ),
-    gradient: "from-purple-500 to-purple-600",
-    lineGradient: "from-gray-300 to-purple-500",
+    icon: <UserRoundSearch className="w-8 h-8 text-[var(--color-secondary)]" />,
   },
   {
     title: "Start Consultation",
     description:
       "Connect with your doctor through secure video calls. Discuss symptoms, get diagnosis, and receive treatment plans.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-8 h-8 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5" />
-        <rect x="2" y="6" width="14" height="12" rx="2" />
-      </svg>
-    ),
-    gradient: "from-green-500 to-green-600",
-    lineGradient: "from-gray-300 to-green-500",
+    icon: <Video className="w-8 h-8 text-[var(--color-secondary)]" />,
   },
   {
     title: "Get Prescription",
     description:
       "Receive digital prescriptions and treatment plans instantly. Access your medical records anytime, anywhere.",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-8 h-8 text-white"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-        <path d="M10 9H8" />
-        <path d="M16 13H8" />
-        <path d="M16 17H8" />
-      </svg>
-    ),
-    gradient: "from-orange-500 to-orange-600",
-    lineGradient: "from-gray-300 to-orange-500",
+    icon: <FilePlus className="w-8 h-8 text-[var(--color-secondary)]" />,
   },
 ];
 
+function StepCard({ icon, title, description }) {
+  return (
+    <div className="flex items-start space-x-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition">
+      <div className="flex-shrink-0">{icon}</div>
+      <div>
+        <h4 className="h4 font-semibold mb-1">{title}</h4>
+        <p className="p">{description}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function HowItWorks() {
-  const [mounted, setMounted] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
-    <section id="how-it-works" className="py-24 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+    <section id="how-it-works" className="py-[var(--space-section)] bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* LEFT COLUMN */}
+        <div>
+          {/* Badge */}
+            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide mb-6">
+              <Sparkles className="w-4 h-4" />
+              <span>Connect in Minutes</span>
+            </div>
+          <h2 className="h2 mb-[var(--space-heading)]">
             How It{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent">
               Works
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Getting quality healthcare has never been easier. Follow these simple steps to connect with top doctors and get the care you need.
+          <p className="p mb-[var(--space-subheading)] max-w-lg">
+            Getting quality healthcare has never been easier. Follow these
+            simple steps to connect with top doctors and get the care you need.
           </p>
+          <InvertedGradientButton
+            onClick={() => setIsLoginOpen(true)}>
+            <span>Start Call Now</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </InvertedGradientButton>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-          {steps.map((step, idx) => (
-            <div key={idx} className={`relative group transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
-              {/* Gradient line for lg screens */}
-              {idx < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 z-0">
-                  <div className={`h-full bg-gradient-to-r ${step.lineGradient} w-full`} />
-                </div>
-              )}
-              <div className="relative z-10 bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group-hover:scale-105">
-                <div className="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  {idx + 1}
-                </div>
-                <div className={`w-16 h-16 bg-gradient-to-r ${step.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  {step.icon}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">{step.description}</p>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-16">
-        <div className="inline-flex items-center space-x-4 bg-white rounded-full px-8 py-4 shadow-lg">
-          <span className="text-gray-700 font-medium">Ready to get started?</span>
-          <button
-            onClick={() => setIsLoginOpen(true)}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+        {/* RIGHT COLUMN */}
+        <div className="relative">
+          {/* Background SVG */}
+          <svg
+            className="absolute top-20 left-10 w-[400px] h-[400px] opacity-20 pointer-events-none"
+            viewBox="0 0 200 200"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Start Call Now
-          </button>
+            <path fill="#0F62FE" d="M49,-74.6C63.8,-66.8,76.3,-53.7,81.9,-38.3C87.4,-23,86,-5.4,82,10.7C77.9,26.7,71.2,41.3,60.9,52.5C50.7,63.6,37,71.5,22.6,74.7C8.2,77.9,-6.9,76.4,-23.1,73.8C-39.2,71.2,-56.5,67.5,-66.6,57C-76.8,46.5,-79.9,29.2,-82.1,11.9C-84.4,-5.3,-85.8,-22.6,-79.1,-35.7C-72.4,-48.7,-57.5,-57.5,-43,-65.5C-28.4,-73.4,-14.2,-80.5,1.5,-82.7C17.1,-85,34.2,-82.4,49,-74.6Z" transform="translate(100 100)" />
+          </svg>
+
+          {/* Grid content */}
+          <div className="grid gap-6 relative z-10">
+            {steps.map((step, idx) => (
+              <StepCard
+                key={idx}
+                icon={step.icon}
+                title={step.title}
+                description={step.description}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Login Popup */}
-      <LoginPopup
-        open={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-      />
-      </div>
+      <LoginPopup open={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </section>
   );
 }

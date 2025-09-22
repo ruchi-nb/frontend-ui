@@ -38,13 +38,13 @@ const AboutSection = () => {
 
   // Carousel data
   const carouselItems = [
-    { id: 1, name: "HealthVision", icon: "👁️" },
-    { id: 2, name: "MediTech", icon: "⚕️" },
-    { id: 3, name: "CarePlus", icon: "➕" },
-    { id: 4, name: "HealthPlus", icon: "❤️" },
-    { id: 5, name: "BioLife", icon: "🔬" },
-    { id: 6, name: "Wellness Corp", icon: "💊" }
-  ];
+  { id: 1, name: "HealthVision", icon: <i className="ri-first-aid-kit-line"></i> },
+  { id: 2, name: "MediTech", icon: <i className="ri-stethoscope-line"></i> },
+  { id: 3, name: "CarePlus", icon: <i className="ri-medicine-bottle-line"></i> },
+  { id: 4, name: "HealthPlus", icon: <i className="ri-heart-pulse-line"></i> },
+  { id: 5, name: "BioLife", icon: <i className="ri-hospital-line"></i> },
+  { id: 6, name: "Wellness Corp", icon: <i className="ri-syringe-line"></i> },
+];
 
   const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
 
@@ -57,7 +57,7 @@ const AboutSection = () => {
   }, [carouselItems.length]);
 
   return (
-    <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
+    <section className="pt-8 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-6">
         {/* Top Heading */}
         <div
@@ -69,7 +69,6 @@ const AboutSection = () => {
           }`}
         >
           <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            <span className="text-red-500">❤️</span>
             <span>About MediCare</span>
           </div>
 
@@ -88,7 +87,7 @@ const AboutSection = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+        <div className="grid lg:grid-cols-2 gap-16 items-center mb-10">
           {/* Left Content */}
           <div
             id="aboutSection2"
@@ -117,7 +116,7 @@ const AboutSection = () => {
             </div>
 
             {/* Bullet Points */}
-            <div className="space-y-4">
+            <div className="hidden lg:block space-y-4">
               {[
                 {
                   title: "Accessible Healthcare",
@@ -152,8 +151,8 @@ const AboutSection = () => {
             {/* 24/7 Support Card */}
             <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg">🛡️</span>
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-lg"><i className="ri-shield-cross-line"></i></span>
                 </div>
               </div>
               <div className="text-3xl font-bold text-gray-900 mb-1">24/7</div>
@@ -163,8 +162,8 @@ const AboutSection = () => {
             {/* Uptime Guarantee Card */}
             <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg">⚡</span>
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-lg"><i className="ri-flashlight-line"></i></span>
                 </div>
               </div>
               <div className="text-3xl font-bold text-gray-900 mb-1">99.9%</div>
@@ -174,8 +173,8 @@ const AboutSection = () => {
             {/* Happy Patients Card */}
             <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg">😊</span>
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-lg"><i className="ri-user-smile-line"></i></span>
                 </div>
               </div>
               <div className="text-3xl font-bold text-gray-900 mb-1">50,000+</div>
@@ -185,48 +184,51 @@ const AboutSection = () => {
             {/* Expert Doctors Card */}
             <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-lg">👨‍⚕️</span>
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-lg"><i className="ri-nurse-line"></i></span>
                 </div>
               </div>
               <div className="text-3xl font-bold text-gray-900 mb-1">1,000+</div>
               <div className="text-gray-600 text-sm">Expert Doctors</div>
             </div>
             {/* Trusted Organizations Section - Full width spanning both columns */}
-        <div
-          id="aboutSection3"
-          className={`lg:col-span-2 bg-white rounded-2xl p-8 shadow-lg mb-20 transition-all duration-1000 ${
-            isVisible.aboutSection3
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-10"
-          }`}
-        >
-          <h4 className="text-lg font-semibold text-gray-900 mb-6 text-center">
-            Trusted by Leading Organizations
-          </h4>
-          
-          <div className="flex flex-col items-center justify-center h-32">
-            <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-3xl mb-3">
-              {carouselItems[currentCarouselIndex].icon}
-            </div>
-            <span className="text-lg font-semibold text-gray-700 text-center">
-              {carouselItems[currentCarouselIndex].name}
-            </span>
-          </div>
-          
-          <div className="flex justify-center mt-6">
-            {carouselItems.map((_, index) => (
-              <button
-                key={index}
-                className={`w-3 h-3 rounded-full mx-1 transition-all duration-300 ${
-                  index === currentCarouselIndex ? "bg-blue-600" : "bg-gray-300 hover:bg-gray-400"
-                }`}
-                onClick={() => setCurrentCarouselIndex(index)}
-                aria-label={`Go to ${carouselItems[index].name}`}
-              />
-            ))}
-          </div>
-        </div>
+            <div
+  id="aboutSection3"
+  className={`col-span-2 bg-white rounded-2xl p-8 shadow-lg mb-20 transition-all duration-1000 ${
+    isVisible.aboutSection3
+      ? "opacity-100 translate-y-0"
+      : "opacity-0 translate-y-10"
+  }`}
+>
+  <h4 className="text-lg font-semibold text-gray-900 mb-6 text-center">
+    Trusted by Leading Organizations
+  </h4>
+
+  <div className="flex flex-col items-center justify-center h-32">
+    <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center text-3xl mb-3">
+      {carouselItems[currentCarouselIndex].icon}
+    </div>
+    <span className="text-lg font-semibold text-gray-700 text-center">
+      {carouselItems[currentCarouselIndex].name}
+    </span>
+  </div>
+
+  <div className="flex justify-center mt-6">
+    {carouselItems.map((_, index) => (
+      <button
+        key={index}
+        className={`w-3 h-3 rounded-full mx-1 transition-all duration-300 ${
+          index === currentCarouselIndex
+            ? "bg-blue-600"
+            : "bg-gray-300 hover:bg-gray-400"
+        }`}
+        onClick={() => setCurrentCarouselIndex(index)}
+        aria-label={`Go to ${carouselItems[index].name}`}
+      />
+    ))}
+  </div>
+</div>
+
           </div>
         </div>
         
