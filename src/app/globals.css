@@ -54,3 +54,66 @@ body {
   font-weight: 300;
   color: var(--color-muted);
 }
+
+.font-gothambook {
+  font-family: var(--font-body);
+  font-weight: 300;
+}
+
+.font-poppins {
+  font-family: var(--font-heading);
+  font-weight: 400;
+}
+
+/* :root {
+  --color-primary: #2563eb; /* blue-600 */
+  /* --color-secondary: #1e40af; blue-800 */
+/* } */
+
+.bubble-animation {
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-10px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(10px) translateX(10px) rotate(5deg);
+  }
+  100% {
+    transform: translateY(0) translateX(0) rotate(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .bubble-animation {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .bubble-animation {
+    height: 200px;
+  }
+}
+
+/* Add to your global.css or tailwind.css */
+select option:hover {
+  background-color: #fbbf24 !important;
+  color: white !important;
+}
+
+select option:checked {
+  background-color: #fbbf24;
+  color: white;
+}

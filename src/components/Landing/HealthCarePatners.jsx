@@ -1,5 +1,6 @@
 "use client";
 
+import { Sparkles, Users, Building, Medal, Heart, User } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const HealthcarePartners = () => {
@@ -124,72 +125,52 @@ const HealthcarePartners = () => {
   }, []);
 
   return (
-    <section className="py-8 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <section className="py-8 bg-gradient-to-b from-[#004dd6] to-[#101828]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16 animate-on-scroll" data-animation="fade-in-up">
-          <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            
-            <span>Join Our Network</span>
+          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide mb-6">
+            <Sparkles className="w-4 h-4" />
+            <span className="uppercase">Join Our Network</span>
           </div>
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Calling All <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Healthcare Heroes</span></h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">Join thousands of doctors and healthcare institutions who are transforming patient care through our platform. Together, we're making quality healthcare accessible to everyone, everywhere.</p>
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">Calling All <span className="bg-gradient-to-r from-[#ffd166] to-[#eba80e] bg-clip-text text-transparent">Healthcare Heroes</span></h2>
+          <p className="text-xl text-[#f1f5f9] max-w-3xl mx-auto">Join thousands of doctors and healthcare institutions who are transforming patient care through our platform. Together, we're making quality healthcare accessible to everyone, everywhere.</p>
         </div>
         
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <div className="space-y-8 animate-on-scroll" data-animation="fade-in-left" data-delay="300">
             <div className="space-y-6">
-              <h3 className="text-3xl font-bold text-gray-900">Why Partner With MediCare?</h3>
-              <p className="text-lg text-gray-600 leading-relaxed">Be part of the healthcare revolution. Our platform empowers medical professionals to deliver exceptional care while reaching more patients than ever before.</p>
+              <h3 className="text-3xl font-bold text-white">Why Partner With MediCare?</h3>
+              <p className="text-lg text-[#f1f5f9] leading-relaxed">Be part of the healthcare revolution. Our platform empowers medical professionals to deliver exceptional care while reaching more patients than ever before.</p>
             </div>
             
             <div className="space-y-6">
               <div className="flex items-start space-x-4 group">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-users w-6 h-6 text-white" aria-hidden="true">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                    <path d="M16 3.128a4 4 0 0 1 0 7.744"></path>
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                  </svg>
+                <div className="w-12 h-12 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="w-8 h-8 text-[#d7e3f7]" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Expand Your Reach</h4>
-                  <p className="text-gray-600 leading-relaxed">Connect with thousands of patients seeking quality healthcare services.</p>
+                  <h4 className="text-xl font-semibold text-white mb-2 group-hover:text-[#ffd166] transition-colors">Expand Your Reach</h4>
+                  <p className="text-[#f1f5f9] leading-relaxed">Connect with thousands of patients seeking quality healthcare services.</p>
                 </div>
               </div>
               
               <div className="flex items-start space-x-4 group">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-building w-6 h-6 text-white" aria-hidden="true">
-                    <rect width="16" height="20" x="4" y="2" rx="2" ry="2"></rect>
-                    <path d="M9 22v-4h6v4"></path>
-                    <path d="M8 6h.01"></path>
-                    <path d="M16 6h.01"></path>
-                    <path d="M12 6h.01"></path>
-                    <path d="M12 10h.01"></path>
-                    <path d="M12 14h.01"></path>
-                    <path d="M16 10h.01"></path>
-                    <path d="M16 14h.01"></path>
-                    <path d="M8 10h.01"></path>
-                    <path d="M8 14h.01"></path>
-                  </svg>
+                <div className="w-12 h-12 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <Building className="w-8 h-8 text-[#d7e3f7]" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Modern Platform</h4>
-                  <p className="text-gray-600 leading-relaxed">Access cutting-edge telemedicine technology and patient management tools.</p>
+                  <h4 className="text-xl font-semibold text-white mb-2 group-hover:text-[#ffd166] transition-colors">Modern Platform</h4>
+                  <p className="text-[#f1f5f9] leading-relaxed">Access cutting-edge telemedicine technology and patient management tools.</p>
                 </div>
               </div>
               
               <div className="flex items-start space-x-4 group">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-award w-6 h-6 text-white" aria-hidden="true">
-                    <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.810-.469l1.514-8.526"></path>
-                    <circle cx="12" cy="8" r="6"></circle>
-                  </svg>
+                <div className="w-12 h-12 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                  <Medal className="w-8 h-8 text-[#d7e3f7]" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Professional Growth</h4>
-                  <p className="text-gray-600 leading-relaxed">Join a network of top-rated healthcare professionals and enhance your practice.</p>
+                  <h4 className="text-xl font-semibold text-white mb-2 group-hover:text-[#ffd166] transition-colors">Professional Growth</h4>
+                  <p className="text-[#f1f5f9] leading-relaxed">Join a network of top-rated healthcare professionals and enhance your practice.</p>
                 </div>
               </div>
             </div>
@@ -218,7 +199,7 @@ const HealthcarePartners = () => {
             
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 hidden lg:block">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white font-bold">Dr</div>
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full px-4 flex items-center justify-center text-white font-bold">Dr</div>
                 <div>
                   <p className="text-gray-700 italic mb-3">"MediCare has revolutionized my practice. I can now reach patients globally while maintaining the highest quality of care. The platform is intuitive and the support is exceptional."</p>
                   <div className="text-sm">
@@ -233,10 +214,8 @@ const HealthcarePartners = () => {
           <div className="animate-on-scroll" data-animation="fade-in-right" data-delay="500">
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-heart w-8 h-8 text-white" aria-hidden="true">
-                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                  </svg>
+                <div className="w-16 h-16  flex items-center justify-center mx-auto mb-4">
+                  <Heart className="w-12 h-12 text-[#004dd6]" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Join Our Mission</h3>
                 <p className="text-gray-600">Fill out the form below and we'll get back to you within 24 hours.</p>

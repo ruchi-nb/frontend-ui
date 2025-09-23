@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { ArrowRight, Clock, Shield, Calendar, Sparkles } from "lucide-react";
 import GradientButton from "../common/GradientButton";
 import LoginPopup from "@/components/Landing/LoginPopUp";
-import AnimatedThinWaves from "../common/AnimatedThinWaves";
+import WavyDivider from "@/components/common/WavyDivider";
 
 export default function HeroSection() {
   const heroRef = useRef(null);
@@ -28,44 +28,25 @@ export default function HeroSection() {
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
-  const hexagons = [
-  { x: 1040, y: 440 },
-  { x: 1140, y: 480 },
-  { x: 1280, y: 440 },
-  { x: 1140, y: 380 },
-];
-
   return (
+    <>
       <section
         ref={heroRef}
-        className="relative z-10 max-w-7xl mx-auto mt-6 pt-20 px-6 pb-32 opacity-0 translate-y-10 transition-all duration-1000 font-[var(--font-body)]" //pt-20 mt-6
+        className="relative z-10 max-w-7xl mx-auto mt-6 pt-20 px-6 pb-32 opacity-0 translate-y-10 transition-all duration-1000 font-[var(--font-body)]"
       >
-        {/* <svg viewBox="0 0 1400 600" className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg">
-        {hexagons.map((pos, index) => (
-          <polygon
-            key={index}
-            points="70,30 110,30 130,65 110,100 70,100 50,65"
-            fill="#efefff"
-            stroke="#3d85c6"
-            strokeWidth="2"
-            opacity="0.3"
-            transform={`translate(${pos.x}, ${pos.y})`}
-          />
-        ))}
-      </svg> */}
         <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
             {/* Badge */}
             <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide mb-6">
               <Sparkles className="w-4 h-4" />
-              <span>Get consultations instantly</span>
+              <span className="uppercase">Get consultations instantly</span>
             </div>
 
             {/* Heading */}
             <h1 className="h2 font-bold leading-tight">
               Healthcare
-              <span className="block text-[#3d85c6]">Made Simple</span>
+              <span className="block bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent">Made Simple</span>
             </h1>
 
             {/* Subtext */}
@@ -107,7 +88,7 @@ export default function HeroSection() {
           </div>
 
           {/* Right Content */}
-            <div className="relative z-10 transition-all duration-1000 delay-300 opacity-100 translate-y-0">
+            <div className="hidden md:block relative z-10 transition-all duration-1000 delay-300 opacity-100 translate-y-0">
               <div className="relative bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 shadow-2xl">
                 <div className="bg-white rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center space-x-4 mb-6">
@@ -148,5 +129,10 @@ export default function HeroSection() {
             </div>
           </div>
       </section>
+          {/* Wavy Divider at the bottom */}
+          <div className="-mt-32">
+            <WavyDivider className="text-[#b9d0f5] " />
+          </div>
+      </>
   );
 }

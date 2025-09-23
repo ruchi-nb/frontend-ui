@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import Navbar from "@/components/DoctorPortal/Navbar";
 import DashboardHeader from "@/components/DoctorPortal/home/DashboardHeader";
 import StatCard from "@/components/DoctorPortal/home/StatCards";
-import { patients } from "@/components/DoctorPortal/data/patients";
+import { patients } from "@/data/patients";
 import TranscriptModal from "@/components/DoctorPortal/home/TranscriptModal";
 import PatientCard from "@/components/DoctorPortal/home/PatientCard";
 

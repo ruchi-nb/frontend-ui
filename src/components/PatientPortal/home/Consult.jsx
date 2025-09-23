@@ -1,6 +1,7 @@
 // File: components/PatientPortal/home/Consult.jsx
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
+import { doctors } from '@/data/doctors';
 
 const Consult = ({ doctor, onBack }) => {
   const [messages, setMessages] = useState([]);
@@ -62,7 +63,7 @@ const Consult = ({ doctor, onBack }) => {
       
       return () => clearTimeout(timer);
     }
-  }, [callStatus, doctor.name]);
+  }, [callStatus, doctors.name]);
 
   const handleVoiceToggle = () => {
     if (!recognitionRef.current) {
@@ -121,8 +122,8 @@ const Consult = ({ doctor, onBack }) => {
             </svg>
           </button>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Consultation with {doctor.name}</h1>
-            <p className="text-sm text-gray-600">{doctor.specialty}</p>
+            <h1 className="text-xl font-bold text-gray-900">Consultation with {doctors.name}</h1>
+            <p className="text-sm text-gray-600">{doctors.specialty}</p>
           </div>
         </div>
         
@@ -141,7 +142,7 @@ const Consult = ({ doctor, onBack }) => {
               <div className="animate-pulse mb-4">
                 <i className="fas fa-video-slash text-4xl"></i>
               </div>
-              <p className="text-xl">Connecting to {doctor.name}...</p>
+              <p className="text-xl">Connecting to {doctors.name}...</p>
               <div className="mt-2 flex space-x-2">
                 <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
                 <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
@@ -154,13 +155,13 @@ const Consult = ({ doctor, onBack }) => {
             <>
               <div className="h-full flex items-center justify-center">
                 <img 
-                  src={doctor.image} 
-                  alt={doctor.name}
+                  src={doctors.image} 
+                  alt={doctors.name}
                   className="max-h-full max-w-full object-contain"
                 />
               </div>
               <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full">
-                {doctor.name}
+                {doctors.name}
               </div>
             </>
           )}

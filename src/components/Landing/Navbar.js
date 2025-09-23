@@ -1,22 +1,39 @@
+// File: src/components/Landing/Navbar.js
 "use client";
 import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import LoginPopup from "@/components/Landing/LoginPopUp";
 import RegisterModal from "@/components/Landing/RegisterModal";
 import OutlineButton from "@/components/common/OutlineButton";
 import GradientButton from "@/components/common/GradientButton";
 import "remixicon/fonts/remixicon.css";
 
-export default function Navbar({ onLogin }) {
+export default function Navbar({ navItems = [], onLogin, onLogout }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [registerPatientOpen, setRegisterPatientOpen] = useState(false);
   const [registerDoctorOpen, setRegisterDoctorOpen] = useState(false);
 
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  const handleClick = (item) => {
+    if (item.type === "link") {
+      router.push(item.path);
+    } else if (item.type === "scroll") {
+      const el = document.getElementById(item.id);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (item.type === "login") {
+      setLoginOpen(true);
+    } else if (item.type === "logout") {
+      onLogout && onLogout();
+    } else if (item.type === "registerPatient") {
+      setRegisterPatientOpen(true);
+    } else if (item.type === "registerDoctor") {
+      setRegisterDoctorOpen(true);
+    }
     setIsMenuOpen(false);
   };
+
 
   return (
     <>
@@ -30,110 +47,97 @@ export default function Navbar({ onLogin }) {
             MediCare
           </div>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8 font-gotham text-[1rem] font-light">
-            <button
-              onClick={() => scrollToSection("how-it-works")}
-              className="text-[#767676] hover:text-[#004dd6] transition-colors"
-            >
-              How It Works
-            </button>
-            <button
-              onClick={() => scrollToSection("benefits")}
-              className="text-[#767676] hover:text-[#004dd6] transition-colors"
-            >
-              Benefits
-            </button>
-            <button
-              onClick={() => scrollToSection("specialties")}
-              className="text-[#767676] hover:text-[#004dd6] transition-colors"
-            >
-              Specialties
-            </button>
-
-            <button
-              onClick={() => setLoginOpen(true)}
-              className="flex items-center space-x-1 border border-[#c8c8c8] rounded-full px-5 py-2 text-black hover:border-[#004dd6] hover:text-[#004dd6] transition-all"
-            >
-              <i className="ri-login-circle-line text-base"></i>
-              <span>Login</span>
-            </button>
-
-            {/* Register Dropdown */}
-            <div className="relative group">
-              <button className="px-6 py-2 rounded-full text-black border border-[#c8c8c8] hover:bg-gradient-to-r hover:from-[#004dd6] hover:to-[#3d85c6] hover:text-white transition-all">
-                Register
-              </button>
-              <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-lg shadow-md border border-[#c8c8c8] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
-                <div className="py-2 text-[1rem] font-light">
-                  <button
-                    onClick={() => setRegisterPatientOpen(true)}
-                    className="w-full text-left px-4 py-2 text-[#767676] hover:bg-[#f3f6ff] hover:text-[#004dd6]"
-                  >
-                    Register as Patient
+          {/* Desktop Menu - updated section */}
+          <div className="hidden md:flex items-center justify-end gap-4 font-gotham text-[1rem] font-light">
+            {navItems.map((item, idx) =>
+              item.type === "dropdown" ? (
+                <div key={idx} className="relative group">
+                  <button className="px-3 py-1.5 rounded-full text-black border border-[#c8c8c8] hover:bg-gradient-to-r hover:from-[#004dd6] hover:to-[#3d85c6] hover:text-white transition-all whitespace-nowrap text-sm">
+                    {item.label}
                   </button>
-                  <button
-                    onClick={() => setRegisterDoctorOpen(true)}
-                    className="w-full text-left px-4 py-2 text-[#767676] hover:bg-[#f9f6ff] hover:text-[#3d85c6]"
-                  >
-                    Register as Doctor
-                  </button>
+                  <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-lg shadow-md border border-[#c8c8c8] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                    <div className="py-2 text-[1rem] font-light">
+                      {item.items.map((subItem, subIdx) => (
+                        <button
+                          key={subIdx}
+                          onClick={() => handleClick(subItem)}
+                          className="w-full text-left px-4 py-2 text-[#767676] hover:bg-[#f3f6ff] hover:text-[#004dd6] whitespace-nowrap text-sm"
+                        >
+                          {subItem.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? (
-                <i className="ri-close-line text-2xl text-black"></i>
+              ) : item.variant === "outline" ? (
+                <OutlineButton 
+                  key={idx} 
+                  onClick={() => handleClick(item)} 
+                  className="whitespace-nowrap py-1.5 px-3 text-sm"
+                  color={item.color}
+                >
+                  {item.icon && <i className={`${item.icon} mr-2`}></i>} {item.label}
+                </OutlineButton>
+              ) : item.variant === "gradient" ? (
+                <GradientButton 
+                  key={idx} 
+                  onClick={() => handleClick(item)} 
+                  className="whitespace-nowrap py-2 px-3 text-sm"
+                  color={item.color}
+                >
+                  {item.label}
+                </GradientButton>
               ) : (
-                <i className="ri-menu-line text-2xl text-black"></i>
-              )}
-            </button>
+                <button
+                  key={idx}
+                  onClick={() => handleClick(item)}
+                  className="px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                >
+                  {item.icon && <i className={`${item.icon} mr-2`}></i>} {item.label}
+                </button>
+              )
+            )}
           </div>
+        {/* </div> */}
+        {/* Mobile Menu Button */}
+        <div className="md:hidden flex items-center">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-gray-700 hover:text-blue-600 focus:outline-none"
+          >
+            {isMenuOpen ? (
+              <i className="ri-close-line text-2xl"></i>
+            ) : (
+              <i className="ri-menu-line text-2xl"></i>
+            )}
+          </button>
         </div>
-
+      </div>
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-[#c8c8c8] shadow-md">
-            <div className="flex flex-col items-center space-y-6 px-4 py-6 font-gotham text-[1rem] font-light">
-              <button
-                onClick={() => scrollToSection("how-it-works")}
-                className="text-[#767676] hover:text-[#004dd6]"
-              >
-                How It Works
-              </button>
-              <button
-                onClick={() => scrollToSection("benefits")}
-                className="text-[#767676] hover:text-[#004dd6]"
-              >
-                Benefits
-              </button>
-              <button
-                onClick={() => scrollToSection("specialties")}
-                className="text-[#767676] hover:text-[#004dd6]"
-              >
-                Specialties
-              </button>
-
-              <OutlineButton
-                onClick={() => {
-                  setLoginOpen(true);
-                  setIsMenuOpen(false);
-                }}>
-                <i className="ri-login-circle-line text-lg"></i>
-                <span>Login</span>
-              </OutlineButton>
-
-              <GradientButton
-                onClick={() => {
-                  setRegisterPatientOpen(true);
-                  setIsMenuOpen(false);
-                }}>
-                Register
-              </GradientButton>
+            <div className="flex flex-col items-center space-y-4 px-4 py-6 font-gotham text-[1rem] font-light">
+              {navItems.map((item, idx) =>
+                item.type === "dropdown" ? (
+                  item.items.map((subItem, subIdx) => (
+                    <button
+                      key={`${idx}-${subIdx}`}
+                      onClick={() => handleClick(subItem)}
+                      className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50 whitespace-nowrap"
+                    >
+                      {subItem.label}
+                    </button>
+                  ))
+                ) : (
+                  <button
+                    key={idx}
+                    onClick={() => handleClick(item)}
+                    className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50 whitespace-nowrap"
+                  >
+                    {item.label}
+                  </button>
+                )
+              )}
             </div>
           </div>
         )}
@@ -144,7 +148,7 @@ export default function Navbar({ onLogin }) {
         open={loginOpen}
         onClose={() => setLoginOpen(false)}
         onLogin={() => {
-          onLogin();
+          onLogin && onLogin();
           setLoginOpen(false);
         }}
       />

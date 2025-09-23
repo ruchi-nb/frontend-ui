@@ -2,7 +2,7 @@
 
 import React from "react";
 import { User, Book, Globe } from "lucide-react";
-import { doctors } from "@/components/PatientPortal/home/data/doctors"; // use relative path to your file
+import { doctors } from "@/data/doctors"; // use relative path to your file
 
 const StatsCard = ({ icon: Icon, bgColor, iconColor, label, value }) => (
   <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

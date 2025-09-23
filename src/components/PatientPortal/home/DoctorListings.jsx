@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { doctors } from '../../../data/doctors.js';
 
 const DoctorListings = ({ doctor }) => {
   const router = useRouter();
@@ -10,11 +11,10 @@ const DoctorListings = ({ doctor }) => {
   };
 
   const handleConsult = () => {
-    alert(`Starting consultation with ${doctor.name}`);
-    // You can implement consultation booking logic here
+    router.push(`/patientportal/consult?doctorId=${doctors.id}`);
   };
 
-  if (!doctor) {
+  if (!doctors) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -55,13 +55,13 @@ const DoctorListings = ({ doctor }) => {
             <div className="relative h-full flex items-center px-8">
               <div className="flex items-center space-x-6">
                 <img 
-                  src={doctor.image} 
-                  alt={doctor.name}
+                  src={doctors.image} 
+                  alt={doctors.name}
                   className="w-32 h-32 rounded-full border-4 border-white object-cover"
                 />
                 <div className="text-white">
-                  <h1 className="text-3xl font-bold mb-2">{doctor.name}</h1>
-                  <p className="text-xl opacity-90">{doctor.specialty}</p>
+                  <h1 className="text-3xl font-bold mb-2">{doctors.name}</h1>
+                  <p className="text-xl opacity-90">{doctors.specialty}</p>
                   <div className="flex items-center mt-2">
                     <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
                       Available
@@ -78,13 +78,13 @@ const DoctorListings = ({ doctor }) => {
               {/* Left Column */}
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">About</h2>
-                <p className="text-gray-600 leading-relaxed mb-6">{doctor.biography}</p>
+                <p className="text-gray-600 leading-relaxed mb-6">{doctors.biography}</p>
 
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Education</h3>
-                <p className="text-gray-600 mb-6">{doctor.education}</p>
+                <p className="text-gray-600 mb-6">{doctos.education}</p>
 
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">Hospital Affiliations</h3>
-                <p className="text-gray-600 mb-6">{doctor.hospitals}</p>
+                <p className="text-gray-600 mb-6">{doctors.hospitals}</p>
               </div>
 
               {/* Right Column */}
@@ -99,14 +99,14 @@ const DoctorListings = ({ doctor }) => {
                       <rect width="18" height="18" x="3" y="4" rx="2"></rect>
                       <path d="M3 10h18"></path>
                     </svg>
-                    <span className="text-gray-700">{doctor.experience}</span>
+                    <span className="text-gray-700">{doctors.experience}</span>
                   </div>
 
                   <div className="flex items-center space-x-3">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-star h-5 w-5 text-yellow-400 fill-current">
                       <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path>
                     </svg>
-                    <span className="text-gray-700">{doctor.rating}</span>
+                    <span className="text-gray-700">{doctors.rating}</span>
                   </div>
 
                   <div className="flex items-center space-x-3">
@@ -115,7 +115,7 @@ const DoctorListings = ({ doctor }) => {
                       <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
                       <path d="M2 12h20"></path>
                     </svg>
-                    <span className="text-gray-700">{doctor.languages}</span>
+                    <span className="text-gray-700">{doctors.languages}</span>
                   </div>
 
                   <div className="flex items-center space-x-3">
@@ -124,7 +124,7 @@ const DoctorListings = ({ doctor }) => {
                       <circle cx="9" cy="11" r="2"></circle>
                       <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
                     </svg>
-                    <span className="text-gray-700">License: {doctor.license}</span>
+                    <span className="text-gray-700">License: {doctors.license}</span>
                   </div>
                 </div>
 

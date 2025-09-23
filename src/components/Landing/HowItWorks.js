@@ -1,7 +1,7 @@
-// frontend-ui/src/components/Landing/HowItWorks.js
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion"; // <-- import motion
 import LoginPopup from "@/components/Landing/LoginPopUp";
 import { Search, UserRoundSearch, Video, FilePlus, Sparkles, ArrowRight } from "lucide-react";
 import InvertedGradientButton from "../common/InvertedGradientButton";
@@ -33,15 +33,22 @@ const steps = [
   },
 ];
 
-function StepCard({ icon, title, description }) {
+// StepCard motion wrapper
+function StepCard({ icon, title, description, custom }) {
   return (
-    <div className="flex items-start space-x-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition">
+    <motion.div
+      className="flex items-start space-x-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition"
+      initial={{ opacity: 0.3, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }} // triggers on scroll
+      viewport={{ once: true, amount: 0.5 }} // animate once when 30% visible
+      transition={{ delay: custom * 0.2, duration: 0.6, ease: "easeInOut" }}
+    >
       <div className="flex-shrink-0">{icon}</div>
       <div>
         <h4 className="h4 font-semibold mb-1">{title}</h4>
         <p className="p">{description}</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -49,18 +56,17 @@ export default function HowItWorks() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   return (
-    <section id="how-it-works" className="py-[var(--space-section)] bg-gray-50">
+    <section id="how-it-works" className="pt-[140px] pb-[80px] bg-[#b9d0f5]">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* LEFT COLUMN */}
         <div>
-          {/* Badge */}
-            <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide mb-6">
-              <Sparkles className="w-4 h-4" />
-              <span>Connect in Minutes</span>
-            </div>
+          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide mb-6">
+            <Sparkles className="w-4 h-4" />
+            <span className="uppercase">Connect in Minutes</span>
+          </div>
           <h2 className="h2 mb-[var(--space-heading)]">
             How It{" "}
-            <span className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#ffd166] to-[#eba80e] bg-clip-text text-transparent">
               Works
             </span>
           </h2>
@@ -68,8 +74,7 @@ export default function HowItWorks() {
             Getting quality healthcare has never been easier. Follow these
             simple steps to connect with top doctors and get the care you need.
           </p>
-          <InvertedGradientButton
-            onClick={() => setIsLoginOpen(true)}>
+          <InvertedGradientButton onClick={() => setIsLoginOpen(true)}>
             <span>Start Call Now</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </InvertedGradientButton>
@@ -77,16 +82,6 @@ export default function HowItWorks() {
 
         {/* RIGHT COLUMN */}
         <div className="relative">
-          {/* Background SVG */}
-          <svg
-            className="absolute top-20 left-10 w-[400px] h-[400px] opacity-20 pointer-events-none"
-            viewBox="0 0 200 200"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path fill="#0F62FE" d="M49,-74.6C63.8,-66.8,76.3,-53.7,81.9,-38.3C87.4,-23,86,-5.4,82,10.7C77.9,26.7,71.2,41.3,60.9,52.5C50.7,63.6,37,71.5,22.6,74.7C8.2,77.9,-6.9,76.4,-23.1,73.8C-39.2,71.2,-56.5,67.5,-66.6,57C-76.8,46.5,-79.9,29.2,-82.1,11.9C-84.4,-5.3,-85.8,-22.6,-79.1,-35.7C-72.4,-48.7,-57.5,-57.5,-43,-65.5C-28.4,-73.4,-14.2,-80.5,1.5,-82.7C17.1,-85,34.2,-82.4,49,-74.6Z" transform="translate(100 100)" />
-          </svg>
-
-          {/* Grid content */}
           <div className="grid gap-6 relative z-10">
             {steps.map((step, idx) => (
               <StepCard
@@ -94,6 +89,7 @@ export default function HowItWorks() {
                 icon={step.icon}
                 title={step.title}
                 description={step.description}
+                custom={idx} // used for stagger
               />
             ))}
           </div>

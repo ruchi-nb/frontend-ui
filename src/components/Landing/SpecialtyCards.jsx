@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Sparkles } from "lucide-react";
+import GradientButton from "../common/GradientButton";
 
 const Specialties = () => {
   const [selected, setSelected] = useState(null);
@@ -11,9 +13,8 @@ const Specialties = () => {
     {
       id: 1,
       title: "Pediatrics",
-      icon: <i className="ri-parent-line"></i>,
+      icon: <i className="ri-parent-line text-4xl text-[var(--color-secondary)]"></i>,
       description: "Comprehensive healthcare for infants, children, and adolescents.",
-      doctors: 52,
       gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our pediatricians provide preventive care, treat childhood illnesses, and support healthy development from infancy through adolescence.",
       conditions: ["Growth Issues", "Common Colds", "Vaccinations", "Behavioral Concerns"]
@@ -21,9 +22,8 @@ const Specialties = () => {
     {
       id: 2,
       title: "Cardiology",
-      icon: <i className="ri-heart-2-fill"></i>,
+      icon: <i className="ri-heart-2-fill text-4xl text-[var(--color-secondary)]"></i>,
       description: "Expert care for heart and cardiovascular conditions.",
-      doctors: 38,
       gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our cardiologists specialize in diagnosing and treating diseases of the heart and blood vessels, helping patients maintain cardiovascular health.",
       conditions: ["Heart Disease", "High Blood Pressure", "Arrhythmias", "Heart Failure"]
@@ -31,9 +31,8 @@ const Specialties = () => {
     {
       id: 3,
       title: "Dermatology",
-      icon: <i className="ri-microscope-line"></i>,
+      icon: <i className="ri-microscope-line text-4xl text-[var(--color-secondary)]"></i>,
       description: "Skin, hair, and nail care from certified dermatologists.",
-      doctors: 27,
       gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our dermatologists diagnose and treat conditions affecting the skin, hair, and nails, providing both medical and cosmetic solutions.",
       conditions: ["Acne", "Eczema", "Psoriasis", "Skin Cancer"]
@@ -41,9 +40,8 @@ const Specialties = () => {
     {
       id: 4,
       title: "Orthopedics",
-      icon: <i className="ri-wheelchair-line"></i>,
+      icon: <i className="ri-wheelchair-line text-4xl text-[var(--color-secondary)]"></i>,
       description: "Treatment for musculoskeletal injuries and conditions.",
-      doctors: 43,
       gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our orthopedic specialists focus on the diagnosis and treatment of disorders of the bones, joints, ligaments, tendons, and muscles.",
       conditions: ["Arthritis", "Fractures", "Sports Injuries", "Joint Pain"]
@@ -51,9 +49,8 @@ const Specialties = () => {
     {
       id: 5,
       title: "Neurology",
-      icon: <i className="ri-brain-line"></i>,
+      icon: <i className="ri-brain-line text-4xl text-[var(--color-secondary)]"></i>,
       description: "Expert care for brain and nervous system disorders.",
-      doctors: 31,
       gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our neurologists specialize in treating disorders of the nervous system, including the brain, spinal cord, nerves, and muscles.",
       conditions: ["Migraines", "Epilepsy", "Stroke", "Multiple Sclerosis"]
@@ -61,9 +58,8 @@ const Specialties = () => {
     {
       id: 6,
       title: "Ophthalmology",
-      icon: <i className="ri-eye-2-line"></i>,
+      icon: <i className="ri-eye-2-line text-4xl text-[var(--color-secondary)]"></i>,
       description: "Comprehensive eye care and vision services.",
-      doctors: 29,
       gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our ophthalmologists provide medical and surgical eye care, treating diseases and conditions affecting vision and eye health.",
       conditions: ["Cataracts", "Glaucoma", "Macular Degeneration", "Diabetic Retinopathy"]
@@ -71,9 +67,8 @@ const Specialties = () => {
     {
       id: 7,
       title: "Psychiatry",
-      icon: <i className="ri-mental-health-line"></i>,
+      icon: <i className="ri-mental-health-line text-4xl text-[var(--color-secondary)]"></i>,
       description: "Mental health care and psychological support.",
-      doctors: 41,
       gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our psychiatrists diagnose and treat mental health disorders through therapy, medication management, and other interventions.",
       conditions: ["Depression", "Anxiety", "Bipolar Disorder", "PTSD"]
@@ -81,9 +76,8 @@ const Specialties = () => {
     {
       id: 8,
       title: "Endocrinology",
-      icon: <i className="ri-flask-line"></i>,
+      icon: <i className="ri-flask-line text-4xl text-[var(--color-secondary)]"></i>,
       description: "Specialized care for hormone-related conditions.",
-      doctors: 24,
       gradient: "from-blue-400 to-blue-600",
       fullDescription: "Our endocrinologists specialize in treating disorders of the endocrine system, including diabetes, thyroid issues, and hormonal imbalances.",
       conditions: ["Diabetes", "Thyroid Disorders", "Osteoporosis", "Hormonal Imbalances"]
@@ -136,16 +130,16 @@ const Specialties = () => {
   }, [selected]);
 
   return (
-    <section id="specialties" className="py-8 bg-white">
+    <section id="specialties" className="py-8 bg-gradient-to-b from-[#3d85c6] to-[#004dd6]     ">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-            
-            <span>Medical Specialties</span>
+          <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide mb-6">
+            <Sparkles className="w-4 h-4" />
+            <span className="uppercase">Medical Specialties</span>
           </div>
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
             Expert Care in Every{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#ffd166] to-[#eba80e] bg-clip-text text-transparent">
               Specialty
             </span>
           </h2>
@@ -156,24 +150,31 @@ const Specialties = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" id="specialty-cards">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" id="specialty-cards">
           {specialties.map((s, idx) => (
             <div
               key={s.id}
-              className="group bg-white rounded-2xl p-6 shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-2 hover:shadow-xl opacity-0 translate-y-10"
+              className="group bg-white rounded-2xl p-6 shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-2 hover:shadow-xl opacity-0 translate-y-10 flex flex-col items-center text-center"
               style={{ transitionDelay: `${idx * 100}ms` }}
               onClick={() => setSelected(s)}
             >
-              <div className={`w-14 h-14 bg-gradient-to-r ${s.gradient} rounded-xl flex items-center justify-center mb-4 text-2xl`}>
+              {/* Icon Container */}
+              <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-6 transition-all duration-300 group-hover:bg-blue-100 group-hover:scale-110">
                 {s.icon}
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+              
+              {/* Title */}
+              <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
                 {s.title}
               </h3>
-              <p className="text-gray-600 text-sm mb-4">{s.description}</p>
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <span>{s.doctors} doctors</span>
-              </div>
+              
+              {/* Description */}
+              <p className="text-gray-600 text-sm mb-4 flex-grow">{s.description}</p>
+              
+              {/* CTA Button */}
+              <button className="text-blue-600 text-sm font-medium mt-auto group-hover:underline">
+                Learn more
+              </button>
             </div>
           ))}
         </div>
@@ -201,26 +202,20 @@ const Specialties = () => {
                 </button>
               </div>
               <p className="text-gray-600 mb-6">{selected.fullDescription}</p>
-              <div className="flex space-x-6 mb-6">
-                <div className="bg-blue-50 p-4 rounded-xl text-center flex-1">
-                  <div className="text-2xl font-bold text-blue-700">{selected.doctors}</div>
-                  <div className="text-sm text-gray-600">Available Doctors</div>
-                </div>
-              </div>
               <div className="mb-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   Common Conditions Treated:
                 </h3>
-                <ul className="grid grid-cols-2 list-disc list-inside text-gray-600 space-y-1">
+                <ul className="grid grid-cols-2 gap-2 list-disc list-inside text-gray-600">
                   {selected.conditions.map((condition, index) => (
-                    <li key={index}>{condition}</li>
+                    <li key={index} className="ml-4">{condition}</li>
                   ))}
                 </ul>
               </div>
               <div className="flex space-x-4">
-                <button className="bg-blue-600 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-700 transition-colors">
+                <GradientButton className="  font-medium transition-colors">
                   Find Specialists
-                </button>
+                </GradientButton>
               </div>
             </div>
           </div>

@@ -15,10 +15,10 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white">
 
       {/* Footer Bottom Section */}
-      <div className="border-t border-gray-800">
+      <div >
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-gray-400 text-sm">
+            <div className="text-white text-sm">
               © 2024 MediCare. All rights reserved. | Made with ❤️ for better healthcare
             </div>
             <div className="flex items-center space-x-4">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from "react";
-import { doctors as rawDoctors } from "@/components/PatientPortal/home/data/doctors";
+import { doctors as rawDoctors } from "@/data/doctors";
 import HosSidebar from "@/components/Hospital/Sidebar";
 import HosNavbar from "@/components/Hospital/Navbar";
 import DoctorsManagementHeader from "@/components/Hospital/Doctor/ManagementHeader";

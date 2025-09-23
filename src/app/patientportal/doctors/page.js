@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import DoctorListing from '@/components/PatientPortal/home/DoctorModal';
-import Navbar from '@/components/PatientPortal/Navbar';
+import { MoveRight } from 'lucide-react';
 
 export default function DoctorsPage() {
   const router = useRouter();
@@ -13,18 +13,18 @@ export default function DoctorsPage() {
   };
 
   return (
-    <div className="pt-16 bg-gray-50">
+    <div className="pt-16 mt-10 bg-[#b9d0f5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <button
           onClick={handleBack}
-          className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 font-medium mb-4"
+          className="flex items-center space-x-2 font-semibold text-lg sm:text-xl mb-4"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-left h-5 w-5">
-            <path d="m12 19-7-7 7-7"></path>
-            <path d="M19 12H5"></path>
-          </svg>
-          <span>Back to Dashboard</span>
+          <MoveRight className="transform rotate-180 text-[#fbbf24]" />
+          <span className="bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] hover:from-[#fcd34d] hover:to-[#d97706] bg-clip-text text-transparent">
+            Back to Dashboard
+          </span>
         </button>
+
       </div>
       <DoctorListing />
     </div>

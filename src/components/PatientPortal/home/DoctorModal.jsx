@@ -2,12 +2,35 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { doctors } from '@/components/PatientPortal/home/data/doctors';
+import { doctors } from '@/data/doctors';
 import Consult from './Consult';
+import InvertedGradientButton from '@/components/common/InvertedGradientButton';
+import OutlineButton from '@/components/common/OutlineButton';
+
+import { Calendar, Medal, Globe, MapPin, Eye, Image, X } from 'lucide-react';
+
+// Add custom CSS for select dropdown hover
+const selectStyles = `
+  select option:hover {
+    background-color: #fbbf24 !important;
+    color: white !important;
+  }
+  
+  select option:checked {
+    background-color: #fbbf24;
+    color: white;
+  }
+`;
 
 const DoctorCard = ({ doctor, onView, onConsult }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+    <div 
+      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="relative h-48">
         <img 
           alt={doctor.name} 
@@ -19,61 +42,62 @@ const DoctorCard = ({ doctor, onView, onConsult }) => {
             Available
           </div>
         </div>
+        
+        {/* Hover Overlay */}
+        <div className={`
+          absolute inset-0 bg-black/40 transition-all duration-300 ease-in-out
+          ${isHovered ? 'opacity-100' : 'opacity-0'}
+        `} />
       </div>
+      
       <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">{doctor.name}</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-2 font-poppins">{doctor.name}</h3>
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-award h-4 w-4 mr-2" aria-hidden="true">
-              <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path>
-              <circle cx="12" cy="8" r="6"></circle>
-            </svg>
-            <span className="text-sm">{doctor.specialty}</span>
+            <Medal className="h-4 w-4 mr-2" aria-hidden="true" />
+            <span className="text-sm font-gothambook">{doctor.specialty}</span>
           </div>
           <div className="flex items-center text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-calendar h-4 w-4 mr-2" aria-hidden="true">
-              <path d="M8 2v4"></path>
-              <path d="M16 2v4"></path>
-              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-              <path d="M3 10h18"></path>
-            </svg>
-            <span className="text-sm">{doctor.experience}</span>
+            <Calendar className="h-4 w-4 mr-2" aria-hidden="true" />
+            <span className="text-sm font-gothambook">{doctor.experience}</span>
           </div>
           <div className="flex items-center text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-globe h-4 w-4 mr-2" aria-hidden="true">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
-              <path d="M2 12h20"></path>
-            </svg>
-            <span className="text-sm">{doctor.languages}</span>
+            <Globe className="h-4 w-4 mr-2" aria-hidden="true" />
+            <span className="text-sm font-gothambook">{doctor.languages}</span>
           </div>          
         </div>
         <div className="mb-4">
           <div className="flex items-start text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin h-4 w-4 mr-2 mt-0.5 flex-shrink-0" aria-hidden="true">
-              <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
-              <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-            <span className="text-sm">{doctor.hospitals}</span>
+            <MapPin className="h-4 w-4 mr-2 mt-1" aria-hidden="true" />
+            <span className="text-sm font-gothambook">{doctor.hospitals}</span>
           </div>
         </div>
-        <div className="flex space-x-3">
-          <button 
-            onClick={() => onView(doctor)}
-            className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye h-4 w-4" aria-hidden="true">
-              <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-            <span>View</span>
-          </button>
-          <button 
-            onClick={() => onConsult(doctor)}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
-          >
-            Consult
-          </button>
+        
+        {/* Buttons Container - Hidden by default, slides up on hover */}
+        <div className={`
+          absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 to-transparent
+          transition-all duration-300 ease-in-out transform
+          ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}
+        `}>
+          <div className="flex space-x-3">
+            <OutlineButton 
+              onClick={() => onView(doctor)}
+              className="flex-1 bg-white/90 backdrop-blur-sm hover:bg-white"
+              color="blue"
+              size="medium"
+              icon={
+                <Eye className="h-4 w-4 mr-2" aria-hidden="true" />
+              }
+            >
+              View
+            </OutlineButton>
+            <InvertedGradientButton 
+              onClick={() => onConsult(doctor)}
+              className="flex-1"
+            >
+              Consult
+            </InvertedGradientButton>
+          </div>
         </div>
       </div>
     </div>
@@ -172,30 +196,34 @@ const DoctorListing = () => {
 
   return (
     <>
+      {/* Add the style tag for custom select styles */}
+      <style jsx global>{selectStyles}</style>
+      
       {showConsultation ? (
         <div className="fixed inset-0 bg-white z-50">
           <Consult doctor={selectedDoctor} onBack={handleCloseConsultation} />
         </div>
       ) : (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen bg-gradient-to-b from-[#b9d0f5] via-[#5894d0] to-[#2975cb] py-8 pt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-8 flex justify-between">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Available Doctors</h1>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-              {/* Filter options */}
-              <div className="flex flex-wrap gap-4">
+            <div className="mb-8">
+              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
+                <h1 className="text-3xl font-bold text-white mb-2 font-poppins">Available Doctors</h1>
+                
+                {/* Filter options - responsive layout */}
+                <div className="flex flex-col sm:flex-row gap-4">
                   <div className="flex flex-col">
-                    <label htmlFor="specialty-filter" className="text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="specialty-filter" className="text-sm font-medium text-white mb-1 font-gothambook">
                       Specialty
                     </label>
                     <select
                       id="specialty-filter"
                       value={selectedSpecialty}
                       onChange={(e) => setSelectedSpecialty(e.target.value)}
-                      className="border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="border border-gray-300 bg-white rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:border-[#fbbf24] font-gothambook hover:border-[#fbbf24] transition-colors"
                     >
                       {specialties.map(specialty => (
-                        <option key={specialty} value={specialty}>
+                        <option key={specialty} value={specialty} className='font-gothambook'>
                           {specialty === 'all' ? 'All Specialties' : specialty}
                         </option>
                       ))}
@@ -203,14 +231,14 @@ const DoctorListing = () => {
                   </div>
                   
                   <div className="flex flex-col">
-                    <label htmlFor="language-filter" className="text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="language-filter" className="text-sm font-medium text-white mb-1 font-gothambook">
                       Language
                     </label>
                     <select
                       id="language-filter"
                       value={selectedLanguage}
                       onChange={(e) => setSelectedLanguage(e.target.value)}
-                      className="border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="border border-gray-300 bg-white rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#fbbf24] focus:border-[#fbbf24] font-gothambook hover:border-[#fbbf24] transition-colors"
                     >
                       {languages.map(language => (
                         <option key={language} value={language}>
@@ -224,17 +252,19 @@ const DoctorListing = () => {
             </div>
             
             {filteredDoctors.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No doctors match your selected filters.</p>
-                <button
+              <div className="text-center py-12 bg-white/90 rounded-xl backdrop-blur-sm">
+                <p className="text-gray-500 text-lg font-gothambook">No doctors match your selected filters.</p>
+                <OutlineButton
                   onClick={() => {
                     setSelectedSpecialty('all');
                     setSelectedLanguage('all');
                   }}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="mt-4 mx-auto"
+                  color="blue"
+                  size="medium"
                 >
                   Reset Filters
-                </button>
+                </OutlineButton>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -262,19 +292,17 @@ const DoctorListing = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">Doctor Profile</h2>
+              <h2 className="text-2xl font-bold text-gray-900 font-poppins">Doctor Profile</h2>
               <button
                 onClick={closeModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="h-6 w-6 mr-2 mt-1 text-black"/>
               </button>
             </div>
 
             <div className="p-6">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 mb-6">
+              <div className="bg-gradient-to-r from-[#3d85c6] to-[#004dd6] rounded-lg p-6 mb-6">
                 <div className="flex items-center space-x-6">
                   <img 
                     src={selectedDoctor.image} 
@@ -282,10 +310,10 @@ const DoctorListing = () => {
                     className="w-24 h-24 rounded-full border-4 border-white object-cover"
                   />
                   <div className="text-white">
-                    <h1 className="text-2xl font-bold mb-2">{selectedDoctor.name}</h1>
-                    <p className="text-lg opacity-90">{selectedDoctor.specialty}</p>
+                    <h1 className="text-2xl font-bold mb-2 font-poppins">{selectedDoctor.name}</h1>
+                    <p className="text-lg opacity-90 font-gothambook">{selectedDoctor.specialty}</p>
                     <div className="flex items-center mt-2">
-                      <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium font-gothambook">
                         Available
                       </span>
                     </div>
@@ -295,64 +323,53 @@ const DoctorListing = () => {
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">About</h3>
-                  <p className="text-gray-600 leading-relaxed mb-6">{selectedDoctor.biography}</p>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 font-poppins">About</h3>
+                  <p className="text-gray-600 leading-relaxed mb-6 font-gothambook">{selectedDoctor.biography}</p>
 
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">Education</h4>
-                  <p className="text-gray-600 mb-6">{selectedDoctor.education}</p>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 font-poppins">Education</h4>
+                  <p className="text-gray-600 mb-6 font-gothambook">{selectedDoctor.education}</p>
 
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">Hospital Affiliations</h4>
-                  <p className="text-gray-600 mb-6">{selectedDoctor.hospitals}</p>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 font-poppins">Hospital Affiliations</h4>
+                  <p className="text-gray-600 mb-6 font-gothambook">{selectedDoctor.hospitals}</p>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Professional Details</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 font-poppins">Professional Details</h3>
                   
                   <div className="space-y-4 mb-6">
                     <div className="flex items-center space-x-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-calendar h-5 w-5 text-blue-600">
-                        <path d="M8 2v4"></path>
-                        <path d="M16 2v4"></path>
-                        <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-                        <path d="M3 10h18"></path>
-                      </svg>
-                      <span className="text-gray-700">{selectedDoctor.experience}</span>
+                      <Calendar className="h-4 w-4 mr-2 mt-1 text-[#2975cb]"/>
+                      <span className="text-gray-700 font-gothambook">{selectedDoctor.experience}</span>
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-globe h-5 w-5 text-blue-600">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
-                        <path d="M2 12h20"></path>
-                      </svg>
-                      <span className="text-gray-700">{selectedDoctor.languages}</span>
+                      <Globe className="h-4 w-4 mr-2 mt-1 text-[#2975cb]"/>
+                      <span className="text-gray-700 font-gothambook">{selectedDoctor.languages}</span>
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-id-card h-5 w-5 text-blue-600">
-                        <rect width="18" height="14" x="5" y="5" rx="2" ry="2"></rect>
-                        <circle cx="9" cy="11" r="2"></circle>
-                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
-                      </svg>
-                      <span className="text-gray-700">License: {selectedDoctor.license}</span>
+                      <Image className="h-4 w-4 mr-2  text-[#2975cb]"/>
+                      <span className="text-gray-700 font-gothambook">License: {selectedDoctor.license}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="flex space-x-4 mt-6 pt-6 border-t border-gray-200">
-                <button
+                <InvertedGradientButton
                   onClick={handleConsultFromModal}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-colors"
+                  className="flex-1"
                 >
                   Start Consultation
-                </button>
-                <button
+                </InvertedGradientButton>
+                <OutlineButton
                   onClick={closeModal}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold transition-colors"
+                  className="flex-1"
+                  color="gray"
+                  size="large"
                 >
                   Close
-                </button>
+                </OutlineButton>
               </div>
             </div>
           </div>
