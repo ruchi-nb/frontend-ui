@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion"; // <-- import motion
+import { motion } from "framer-motion"; 
 import LoginPopup from "@/components/Landing/LoginPopUp";
 import { Search, UserRoundSearch, Video, FilePlus, Sparkles, ArrowRight } from "lucide-react";
 import InvertedGradientButton from "../common/InvertedGradientButton";

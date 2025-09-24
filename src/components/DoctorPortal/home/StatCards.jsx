@@ -1,12 +1,11 @@
 "use client";
-
 import React from "react";
 
-const StatCard = ({ title, value, icon: Icon, iconBg, iconColor }) => {
+const StatCard = ({ title, value, icon: Icon, iconColor }) => {
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
       <div className="flex items-center">
-        <div className={`${iconBg} p-3 rounded-lg`}>
+        <div >
           <Icon className={`h-6 w-6 ${iconColor}`} />
         </div>
         <div className="ml-4">

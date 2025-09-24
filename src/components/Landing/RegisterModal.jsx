@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { registerPatient } from "@/data/api";
 
 export default function RegisterModal({ kind, open, onClose, onRegisterDoctor }) {
   const router = useRouter();
@@ -53,7 +54,7 @@ export default function RegisterModal({ kind, open, onClose, onRegisterDoctor })
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors = {};
     if (!formData.firstName) newErrors.firstName = "First name is required.";
     if (!formData.lastName) newErrors.lastName = "Last name is required.";
@@ -67,8 +68,25 @@ export default function RegisterModal({ kind, open, onClose, onRegisterDoctor })
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    alert(`${submitLabel} successful!`);
-    onClose();
+    try {
+      if (kind === "patient") {
+        await registerPatient({
+          username: `${formData.firstName.toLowerCase()}_${Date.now()}`,
+          email: formData.email,
+          password: Math.random().toString(36).slice(2) + "A1!",
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          phone: formData.phone,
+          hospital_id: null,
+        });
+        alert("Patient registered. Please log in.");
+      } else if (onRegisterDoctor) {
+        onRegisterDoctor();
+      }
+      onClose();
+    } catch (e) {
+      alert(e?.message || "Registration failed");
+    }
   };
 
   const handleGoogleSignUp = () => {

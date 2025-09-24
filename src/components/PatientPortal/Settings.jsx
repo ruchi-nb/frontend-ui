@@ -1,32 +1,84 @@
 // File: components/PatientPortal/Settings.jsx
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getPatientProfile, updatePatientProfile } from "@/data/api";
 
 export default function ProfileForm() {
   const [formData, setFormData] = useState({
-    firstName: "Sarah",
-    lastName: "Johnson",
-    email: "sarah.johnson@email.com",
-    dob: "1990-05-15",
-    phone: "+1 (555) 123-4567",
-    street: "123 Main Street",
-    city: "San Francisco",
-    state: "CA",
-    zip: "94102",
+    firstName: "",
+    lastName: "",
+    email: "",
+    dob: "",
+    phone: "",
+    street: "",
+    city: "",
+    state: "",
+    zip: "",
   });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await getPatientProfile();
+        if (!mounted) return;
+        setFormData({
+          firstName: data.first_name || "",
+          lastName: data.last_name || "",
+          email: data.email || "",
+          dob: data.dob || "",
+          phone: data.phone || "",
+          street: data.address?.street || "",
+          city: data.address?.city || "",
+          state: data.address?.state || "",
+          zip: data.address?.zip || "",
+        });
+      } catch (e) {
+        if (mounted) setError(e?.message || "Failed to load profile");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setSaving(true);
+    setError("");
+    try {
+      await updatePatientProfile({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        dob: formData.dob,
+        phone: formData.phone,
+        address: {
+          street: formData.street,
+          city: formData.city,
+          state: formData.state,
+          zip: formData.zip,
+        },
+      });
+      alert("Saved");
+    } catch (e) {
+      setError(e?.message || "Failed to save profile");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {loading && <p className="text-gray-600">Loading...</p>}
+        {error && <p className="text-red-600">{error}</p>}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
           <p className="text-gray-600">

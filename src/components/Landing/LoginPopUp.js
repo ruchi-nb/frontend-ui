@@ -3,9 +3,12 @@
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useState } from "react";
 import RegisterModal from "@/components/Landing/RegisterModal";
+import { login } from "@/data/api";
 
 export default function LoginPopup({ open, onClose, onLogin, onRegisterDoctor }) {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   return (
     <>
@@ -29,17 +32,31 @@ export default function LoginPopup({ open, onClose, onLogin, onRegisterDoctor })
               Sign in with Google to access your dashboard
             </p>
 
-            {/* Google Login Button */}
+            {/* Demo Login Button (replace with real form or OAuth) */}
             <button
-              onClick={() => {
-                onLogin();
-                onClose();
+              onClick={async () => {
+                setLoading(true);
+                setError("");
+                try {
+                  // TODO: Replace hardcoded creds with real inputs or Google callback
+                  await login({ email: "patient@example.com", password: "password123" });
+                  onLogin && onLogin();
+                  onClose();
+                } catch (e) {
+                  setError(e?.message || "Login failed");
+                } finally {
+                  setLoading(false);
+                }
               }}
               className="w-full flex items-center justify-center gap-3 border border-[#c8c8c8] text-black px-6 py-3 rounded-full hover:bg-gradient-to-r hover:from-[#004dd6] hover:to-[#3d85c6] hover:text-white transition-all mb-6"
             >
               <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
-              <span className="font-medium">Continue with Google Account</span>
+              <span className="font-medium">{loading ? "Signing in..." : "Continue (Demo Login)"}</span>
             </button>
+
+            {error && (
+              <p className="text-[#9f0202] text-sm text-center mb-4">{error}</p>
+            )}
 
             {/* Terms */}
             <p className="text-xs text-[#767676] text-center mb-6">

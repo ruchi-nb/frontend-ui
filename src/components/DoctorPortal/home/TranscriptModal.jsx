@@ -1,12 +1,10 @@
 "use client";
-
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
 
 const TranscriptModal = ({ isOpen, onClose, patient }) => {
   if (!isOpen) return null;
 
-  // State to track which transcript is currently selected
   const [currentTranscriptIndex, setCurrentTranscriptIndex] = useState(0);
   const currentTranscript = patient?.transcripts?.[currentTranscriptIndex];
 
@@ -17,18 +15,28 @@ const TranscriptModal = ({ isOpen, onClose, patient }) => {
     content += `Patient: ${patient.name}\n`;
     content += `Specialty: ${patient.specialty}\n`;
     content += `Date: ${currentTranscript.date}\n`;
+    content += `Doctor: ${currentTranscript.doctor || "Not specified"}\n`;
+    content += `Duration: ${currentTranscript.duration}\n`;
     content += `Transcript ID: ${currentTranscript.id}\n\n`;
 
     currentTranscript.entries.forEach((entry) => {
       content += `${entry.speaker}: ${entry.text}\n`;
     });
 
+    // Add summary and follow-up if available
+    if (currentTranscript.summary) {
+      content += `\nSummary: ${currentTranscript.summary}\n`;
+    }
+    if (currentTranscript.followUp) {
+      content += `Follow-up: ${currentTranscript.followUp}\n`;
+    }
+
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = `transcript-${currentTranscript.id}.txt`;
+    link.download = `transcript-${patient.name}-${currentTranscript.id}.txt`;
     link.click();
 
     URL.revokeObjectURL(url);
@@ -50,6 +58,10 @@ const TranscriptModal = ({ isOpen, onClose, patient }) => {
     doc.text(`Specialty: ${patient.specialty}`, 10, y);
     y += 6;
     doc.text(`Date: ${currentTranscript.date}`, 10, y);
+    y += 6;
+    doc.text(`Doctor: ${currentTranscript.doctor || "Not specified"}`, 10, y);
+    y += 6;
+    doc.text(`Duration: ${currentTranscript.duration}`, 10, y);
     y += 6;
     doc.text(`Transcript ID: ${currentTranscript.id}`, 10, y);
     y += 10;
@@ -73,8 +85,37 @@ const TranscriptModal = ({ isOpen, onClose, patient }) => {
       }
     });
 
+    // Add summary and follow-up
+    if (currentTranscript.summary) {
+      doc.setTextColor(0, 0, 0);
+      if (y > 250) {
+        doc.addPage();
+        y = 10;
+      }
+      doc.setFontSize(14);
+      doc.text("Medical Summary:", 10, y);
+      y += 8;
+      doc.setFontSize(10);
+      const summaryText = doc.splitTextToSize(currentTranscript.summary, 180);
+      doc.text(summaryText, 10, y);
+      y += summaryText.length * 5;
+    }
+
+    if (currentTranscript.followUp) {
+      if (y > 250) {
+        doc.addPage();
+        y = 10;
+      }
+      doc.setFontSize(14);
+      doc.text("Follow-up Plan:", 10, y);
+      y += 8;
+      doc.setFontSize(10);
+      const followUpText = doc.splitTextToSize(currentTranscript.followUp, 180);
+      doc.text(followUpText, 10, y);
+    }
+
     doc.setTextColor(0, 0, 0);
-    doc.save(`transcript-${currentTranscript.id}.pdf`);
+    doc.save(`transcript-${patient.name}-${currentTranscript.id}.pdf`);
   };
 
   return (
@@ -113,11 +154,11 @@ const TranscriptModal = ({ isOpen, onClose, patient }) => {
             <select
               value={currentTranscriptIndex}
               onChange={(e) => setCurrentTranscriptIndex(Number(e.target.value))}
-              className="text-black border border-gray-800 rounded-lg p-1 text-sm"
+              className="text-black border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {patient.transcripts.map((t, index) => (
                 <option key={t.id} value={index}>
-                  {t.date} - {t.specialty}
+                  {t.date} - {t.doctor}
                 </option>
               ))}
             </select>
@@ -148,59 +189,70 @@ const TranscriptModal = ({ isOpen, onClose, patient }) => {
         {/* Transcript info */}
         <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center gap-6 text-sm text-gray-600">
           <div className="flex items-center">
-            <span>{currentTranscript?.date}</span>
+            <span className="font-medium">Date:</span>
+            <span className="ml-2">{currentTranscript?.date}</span>
           </div>
-          <div className="flex items-center">{patient.specialty}</div>
-          <div className="flex items-center">{currentTranscript?.duration}</div>
+          <div className="flex items-center">
+            <span className="font-medium">Doctor:</span>
+            <span className="ml-2">{currentTranscript?.doctor || "Not specified"}</span>
+          </div>
+          <div className="flex items-center">
+            <span className="font-medium">Duration:</span>
+            <span className="ml-2">{currentTranscript?.duration}</span>
+          </div>
+          <div className="flex items-center">
+            <span className="font-medium">Specialty:</span>
+            <span className="ml-2">{patient.specialty}</span>
+          </div>
         </div>
 
         {/* Conversation content */}
-        <div className="flex-1 overflow-y-auto p-6 prose max-w-none">
-          <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="space-y-6">
             {currentTranscript?.entries?.map((entry, index) => (
-              <div key={index} className="mb-4">
-                <div className="mb-3 flex items-start space-x-3">
-                  <div
-                    className={`p-1.5 rounded-full mt-1 ${
-                      entry.speaker === "Doctor" ? "bg-blue-100" : "bg-green-100"
-                    }`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={`lucide lucide-user h-3 w-3 ${
-                        entry.speaker === "Doctor"
-                          ? "text-blue-600"
-                          : "text-green-600"
-                      }`}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                      <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+              <div key={index} className="flex items-start space-x-4">
+                <div
+                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                    entry.speaker === "Doctor" 
+                      ? "bg-blue-100 text-blue-600" 
+                      : "bg-green-100 text-green-600"
+                  }`}
+                >
+                  {entry.speaker === "Doctor" ? "D" : "P"}
+                </div>
+                <div className="flex-1">
+                  <div className={`font-semibold mb-1 ${
+                    entry.speaker === "Doctor" 
+                      ? "text-blue-700" 
+                      : "text-green-700"
+                  }`}>
+                    {entry.speaker}
                   </div>
-                  <div>
-                    <span
-                      className={`font-semibold ${
-                        entry.speaker === "Doctor"
-                          ? "text-blue-700"
-                          : "text-green-700"
-                      }`}
-                    >
-                      {entry.speaker}:
-                    </span>
-                    <span className="ml-2">{entry.text}</span>
+                  <div className="text-gray-800 leading-relaxed">
+                    {entry.text}
                   </div>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Summary and Follow-up */}
+          {(currentTranscript?.summary || currentTranscript?.followUp) && (
+            <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+              {currentTranscript.summary && (
+                <div className="mb-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">Medical Summary</h3>
+                  <p className="text-gray-700">{currentTranscript.summary}</p>
+                </div>
+              )}
+              {currentTranscript.followUp && (
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Follow-up Plan</h3>
+                  <p className="text-gray-700">{currentTranscript.followUp}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -216,13 +268,13 @@ const TranscriptModal = ({ isOpen, onClose, patient }) => {
               Close
             </button>
             <button
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               onClick={handleDownloadTxt}
             >
               Download TXT
             </button>
             <button
-              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
+              className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
               onClick={handleDownloadPdf}
             >
               Download PDF
