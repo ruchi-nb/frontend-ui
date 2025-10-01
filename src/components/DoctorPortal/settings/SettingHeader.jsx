@@ -1,3 +1,4 @@
+import InvertedGradientButton from "@/components/common/InvertedGradientButton";
 export default function SettingsHeader({ isEditing, setIsEditing, onSave, onCancel }) {
   
   const handleEditClick = () => {
@@ -5,30 +6,30 @@ export default function SettingsHeader({ isEditing, setIsEditing, onSave, onCanc
   };
 
   return (
-    <div className="flex justify-between items-center mb-8">
+    <div className="flex justify-between items-center mb-8 bg-gradient-to-r from-[#3d85c6] to-[#004dd6] hover:from-[#003cb3] p-4 rounded-2xl">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-        <p className="text-gray-600">Manage your profile and preferences</p>
+        <h1 className="text-3xl font-bold text-white mb-2">Settings</h1>
+        <p className="text-blue-100">Manage your profile and preferences</p>
       </div>
       
       {!isEditing ? (
-        <button
+        <InvertedGradientButton
           onClick={handleEditClick}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          color="amber"
         >
           Edit Profile
-        </button>
+        </InvertedGradientButton>
       ) : (
         <div className="flex space-x-3">
-          <button 
+          <InvertedGradientButton 
             onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            color="red"
           >
             Cancel
-          </button>
-          <button 
+          </InvertedGradientButton>
+          <InvertedGradientButton 
             onClick={onSave}
-            className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+            color="amber"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -48,7 +49,7 @@ export default function SettingsHeader({ isEditing, setIsEditing, onSave, onCanc
               <path d="M7 3v4a1 1 0 0 0 1 1h7"></path>
             </svg>
             Save Changes
-          </button>
+          </InvertedGradientButton>
         </div>
       )}
     </div>

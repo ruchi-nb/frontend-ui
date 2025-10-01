@@ -27,18 +27,6 @@ const Sidebar = () => {
       path: "/admin/management",
       icon: <Building2 className="w-5 h-5 mr-3" />,
     },
-    {
-      id: "AuditLogs",
-      label: "Audit Logs",
-      path: "/Hospital/audit-logs",
-      icon: <FileText className="w-5 h-5 mr-3" />,
-    },
-    {
-      id: "SecuritySettings",
-      label: "Security Settings",
-      path: "/Hospital/security",
-      icon: <Shield className="w-5 h-5 mr-3" />,
-    },
   ];
 
   const isActive = (path) => pathname === path;

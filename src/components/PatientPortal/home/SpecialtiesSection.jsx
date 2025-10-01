@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {ChevronRight} from 'lucide-react';
-import { specialties } from "../../../data/Specialties.js";
+import { specialties } from "@/data/Specialties";
 
 const SpecialtiesSection = () => {
   const router = useRouter();
@@ -66,8 +66,11 @@ const SpecialtiesSection = () => {
   const handleStartConsultation = () => {
     if (selectedDoctor) {
       setModalOpen(false);
-      // Navigate to consult page with doctor data
-      router.push(`/patientportal/consult?doctorId=${selectedDoctor.id}`);
+      // Prefer routing by a stable identifier (id). Fallback to name if id missing.
+      const idOrName = selectedDoctor.id ?? selectedDoctor.name;
+      router.push(`/patientportal/consult?doctorId=${encodeURIComponent(idOrName)}`);
+    } else {
+      console.error("No doctor selected");
     }
   };
 

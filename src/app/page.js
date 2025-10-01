@@ -1,27 +1,43 @@
-// frontend-ui/src/app/page.js
 "use client";
 
 import { useRouter } from "next/navigation";
 import LandingPage from "./landing/page";
+import { GoogleLogin } from "@react-oauth/google";
+import { loginWithGoogle } from "@/data/api";
 
 export default function Home() {
   const router = useRouter();
 
-  // Existing patient login
   const handleLogin = () => {
-    localStorage.setItem("isLoggedIn", "true"); // store login state
-    router.push("/patientportal"); // redirect to patient portal
+    localStorage.setItem("isLoggedIn", "true");
+    router.push("/patientportal");
   };
 
-  // New doctor registration/login button
   const handleDoctorRegister = () => {
-    router.push("/doctorportal"); // redirect to doctor portal
+    router.push("/doctorportal");
+  };
+
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    try {
+      const idToken = credentialResponse.credential; // Google JWT
+      await loginWithGoogle(idToken); // send to backend and store tokens
+      localStorage.setItem("isLoggedIn", "true");
+      router.push("/patientportal");
+    } catch (err) {
+      console.error("Google login failed", err);
+    }
   };
 
   return (
     <LandingPage
       onLogin={handleLogin}
-      onRegisterDoctor={handleDoctorRegister} // pass the new prop
+      onRegisterDoctor={handleDoctorRegister}
+      googleLoginButton={
+        <GoogleLogin
+          onSuccess={handleGoogleLoginSuccess}
+          onError={() => console.error("Login Failed")}
+        />
+      }
     />
   );
 }

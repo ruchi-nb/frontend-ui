@@ -21,7 +21,7 @@ const ProfileInformation = ({ isEditing }) => {
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
             </div>
-            {isEditing && (
+          {isEditing && (
               <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-1 rounded-full">
                 <svg className="lucide lucide-camera" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
                   <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
@@ -43,7 +43,6 @@ const ProfileInformation = ({ isEditing }) => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
             <input
-              disabled={!isEditing}
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
@@ -55,7 +54,6 @@ const ProfileInformation = ({ isEditing }) => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
             <input
-              disabled={!isEditing}
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
@@ -79,7 +77,6 @@ const ProfileInformation = ({ isEditing }) => {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
             <input
-              disabled={!isEditing}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"

@@ -1,8 +1,11 @@
-// File: app/patientportal/layout.jsx
 "use client";
+
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Landing/Navbar";
 import Footer from "@/components/Landing/Footer";
+import { useState, useEffect } from "react";
+import { LifeLine } from "react-loading-indicators";
+import { getStoredTokens, clearTokens, logout } from "@/data/api";
 
 const portalNavItems = [
   { type: "link", path: "/patientportal", label: "Home" },
@@ -11,23 +14,75 @@ const portalNavItems = [
   { type: "logout", label: "Logout", variant: "outline", color: "red" },
 ];
 
-
-export default function PatientPortalLayout({ children }) {
+function PortalContent({ children }) {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    router.push("/");
+  useEffect(() => {
+    // Check if user is authenticated
+    const { accessToken } = getStoredTokens();
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    
+    if (accessToken && isLoggedIn) {
+      setIsAuthenticated(true);
+    } else {
+      // Clear any invalid tokens
+      clearTokens();
+      localStorage.removeItem("isLoggedIn");
+    }
+    
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    } finally {
+      clearTokens();
+      localStorage.removeItem("isLoggedIn");
+      setTimeout(() => {
+        router.push("/");
+      }, 1500);
+    }
   };
 
+  if (loading || loggingOut) {
+    return (
+      <div className="h-screen bg-[#fdfeff] flex items-center justify-center">
+        <div className="text-center">
+          <LifeLine
+            color="#b9d0f5"
+            size="large"
+            text={loggingOut ? "Logging out..." : "Medicare"}
+            textColor="#b9d0f5"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    router.push("/");
+    return null;
+  }
+
   return (
-    <div>
-      <Navbar 
-        onLogout={handleLogout} 
-        navItems={portalNavItems} 
-      />
+    <>
+      <Navbar onLogout={handleLogout} navItems={portalNavItems} />
       <main>{children}</main>
       <Footer />
-    </div>
+    </>
   );
+}
+
+export default function PatientPortalLayout({ children }) {
+  return <PortalContent>{children}</PortalContent>;
 }

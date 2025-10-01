@@ -63,7 +63,7 @@ const Consult = ({ doctor, onBack }) => {
       
       return () => clearTimeout(timer);
     }
-  }, [callStatus, doctors.name]);
+  }, [callStatus, doctor?.name]);
 
   const handleVoiceToggle = () => {
     if (!recognitionRef.current) {
@@ -122,8 +122,8 @@ const Consult = ({ doctor, onBack }) => {
             </svg>
           </button>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Consultation with {doctors.name}</h1>
-            <p className="text-sm text-gray-600">{doctors.specialty}</p>
+            <h1 className="text-xl font-bold text-gray-900">Consultation with {doctor?.name}</h1>
+            <p className="text-sm text-gray-600">{doctor?.specialty}</p>
           </div>
         </div>
         
@@ -142,7 +142,7 @@ const Consult = ({ doctor, onBack }) => {
               <div className="animate-pulse mb-4">
                 <i className="fas fa-video-slash text-4xl"></i>
               </div>
-              <p className="text-xl">Connecting to {doctors.name}...</p>
+              <p className="text-xl">Connecting to {doctor?.name}...</p>
               <div className="mt-2 flex space-x-2">
                 <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
                 <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
@@ -155,13 +155,13 @@ const Consult = ({ doctor, onBack }) => {
             <>
               <div className="h-full flex items-center justify-center">
                 <img 
-                  src={doctors.image} 
-                  alt={doctors.name}
+                  src={doctor?.image} 
+                  alt={doctor?.name}
                   className="max-h-full max-w-full object-contain"
                 />
               </div>
               <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full">
-                {doctors.name}
+                {doctor?.name}
               </div>
             </>
           )}

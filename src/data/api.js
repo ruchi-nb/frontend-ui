@@ -107,11 +107,48 @@ export function updatePatientProfile(update) {
 }
 
 export function registerPatient(payload) {
-  return request("/auth/register/patient", { method: "POST", body: JSON.stringify(payload) }, { withAuth: true });
+  return request("/auth/register/patient", { method: "POST", body: JSON.stringify(payload) }, { withAuth: false });
 }
 
 export const apiInternal = { getStoredTokens, setStoredTokens, clearTokens };
 
 
+// Additional helpers
+export function getPatientConsultations() {
+  return request("/patients/consultations", { method: "GET" });
+}
 
+// Doctor registration (requires privileged auth per backend permissions)
+export function registerDoctor(payload) {
+  return request("/auth/register/doctor", { method: "POST", body: JSON.stringify(payload) }, { withAuth: true });
+}
 
+// Named exports for token helpers (used by contexts/UserContext.jsx)
+export { getStoredTokens, setStoredTokens, clearTokens };
+
+// Avatar upload (multipart)
+export async function uploadPatientAvatar(file) {
+  const url = `${API_BASE}/patients/profile/avatar`;
+  const form = new FormData();
+  form.append("file", file);
+  const headers = {};
+  const { accessToken } = getStoredTokens();
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
+  const res = await fetch(url, { method: "POST", body: form, headers, credentials: "include" });
+  return handleResponse(res);
+}
+
+export async function loginWithGoogle(idToken) {
+  // idToken is obtained from Google Sign-In on frontend
+  const data = await request(
+    "/auth/google-login",
+    {
+      method: "POST",
+      body: JSON.stringify({ id_token: idToken }),
+    },
+    { withAuth: false }
+  );
+  // store returned tokens
+  setStoredTokens(data.access_token, data.refresh_token);
+  return data;
+}

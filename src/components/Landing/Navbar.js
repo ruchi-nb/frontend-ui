@@ -13,8 +13,7 @@ export default function Navbar({ navItems = [], onLogin, onLogout }) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
-  const [registerPatientOpen, setRegisterPatientOpen] = useState(false);
-  const [registerDoctorOpen, setRegisterDoctorOpen] = useState(false);
+  const [registerOpen, setRegisterOpen] = useState(false);
 
   const handleClick = (item) => {
     if (item.type === "link") {
@@ -26,14 +25,11 @@ export default function Navbar({ navItems = [], onLogin, onLogout }) {
       setLoginOpen(true);
     } else if (item.type === "logout") {
       onLogout && onLogout();
-    } else if (item.type === "registerPatient") {
-      setRegisterPatientOpen(true);
-    } else if (item.type === "registerDoctor") {
-      setRegisterDoctorOpen(true);
+    } else if (item.type === "register") {
+      setRegisterOpen(true);
     }
     setIsMenuOpen(false);
   };
-
 
   return (
     <>
@@ -47,29 +43,10 @@ export default function Navbar({ navItems = [], onLogin, onLogout }) {
             MediCare
           </div>
 
-          {/* Desktop Menu - updated section */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center justify-end gap-4 font-gotham text-[1rem] font-light">
             {navItems.map((item, idx) =>
-              item.type === "dropdown" ? (
-                <div key={idx} className="relative group">
-                  <button className="px-3 py-1.5 rounded-full text-black border border-[#c8c8c8] hover:bg-gradient-to-r hover:from-[#004dd6] hover:to-[#3d85c6] hover:text-white transition-all whitespace-nowrap text-sm">
-                    {item.label}
-                  </button>
-                  <div className="absolute top-full right-0 mt-2 w-52 bg-white rounded-lg shadow-md border border-[#c8c8c8] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
-                    <div className="py-2 text-[1rem] font-light">
-                      {item.items.map((subItem, subIdx) => (
-                        <button
-                          key={subIdx}
-                          onClick={() => handleClick(subItem)}
-                          className="w-full text-left px-4 py-2 text-[#767676] hover:bg-[#f3f6ff] hover:text-[#004dd6] whitespace-nowrap text-sm"
-                        >
-                          {subItem.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : item.variant === "outline" ? (
+              item.variant === "outline" ? (
                 <OutlineButton 
                   key={idx} 
                   onClick={() => handleClick(item)} 
@@ -98,46 +75,35 @@ export default function Navbar({ navItems = [], onLogin, onLogout }) {
               )
             )}
           </div>
-        {/* </div> */}
-        {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-gray-700 hover:text-blue-600 focus:outline-none"
-          >
-            {isMenuOpen ? (
-              <i className="ri-close-line text-2xl"></i>
-            ) : (
-              <i className="ri-menu-line text-2xl"></i>
-            )}
-          </button>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-gray-700 hover:text-blue-600 focus:outline-none"
+            >
+              {isMenuOpen ? (
+                <i className="ri-close-line text-2xl"></i>
+              ) : (
+                <i className="ri-menu-line text-2xl"></i>
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-[#c8c8c8] shadow-md">
             <div className="flex flex-col items-center space-y-4 px-4 py-6 font-gotham text-[1rem] font-light">
-              {navItems.map((item, idx) =>
-                item.type === "dropdown" ? (
-                  item.items.map((subItem, subIdx) => (
-                    <button
-                      key={`${idx}-${subIdx}`}
-                      onClick={() => handleClick(subItem)}
-                      className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50 whitespace-nowrap"
-                    >
-                      {subItem.label}
-                    </button>
-                  ))
-                ) : (
-                  <button
-                    key={idx}
-                    onClick={() => handleClick(item)}
-                    className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50 whitespace-nowrap"
-                  >
-                    {item.label}
-                  </button>
-                )
-              )}
+              {navItems.map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleClick(item)}
+                  className="w-full text-left px-3 py-2 rounded-md text-sm text-gray-700 hover:text-blue-600 hover:bg-gray-50 whitespace-nowrap"
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
           </div>
         )}
@@ -154,14 +120,8 @@ export default function Navbar({ navItems = [], onLogin, onLogout }) {
       />
 
       <RegisterModal
-        kind="patient"
-        open={registerPatientOpen}
-        onClose={() => setRegisterPatientOpen(false)}
-      />
-      <RegisterModal
-        kind="doctor"
-        open={registerDoctorOpen}
-        onClose={() => setRegisterDoctorOpen(false)}
+        open={registerOpen}
+        onClose={() => setRegisterOpen(false)}
       />
     </>
   );

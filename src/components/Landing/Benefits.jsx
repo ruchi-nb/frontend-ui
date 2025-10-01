@@ -92,21 +92,28 @@ export default function WhyChoose() {
           <div className="lg:w-2/5 flex items-center justify-center">
             <div className="relative w-full h-64 lg:h-96">
               {/* Bubble animation container */}
-              <div className="absolute inset-0 bubble-animation">
-                {[...Array(15)].map((_, i) => (
-                  <div 
-                    key={i}
-                    className="absolute rounded-full bg-gradient-to-br from-blue-100 to-blue-200 opacity-70"
-                    style={{
-                      width: `${Math.random() * 40 + 20}px`,
-                      height: `${Math.random() * 40 + 20}px`,
-                      left: `${Math.random() * 90}%`,
-                      top: `${Math.random() * 90}%`,
-                      animation: `float ${Math.random() * 15 + 10}s infinite ease-in-out`,
-                      animationDelay: `${Math.random() * 5}s`,
-                    }}
-                  ></div>
-                ))}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {[...Array(20)].map((_, i) => {
+                  const size = Math.random() * 40 + 20;
+                  const duration = Math.random() * 20 + 10;
+                  const delay = Math.random() * 15;
+                  const left = Math.random() * 100;
+
+                  return (
+                    <div
+                      key={i}
+                      className="absolute rounded-full bg-gradient-to-br from-blue-100 to-blue-300 opacity-60 animate-bubble"
+                      style={{
+                        width: `${size}px`,
+                        height: `${size}px`,
+                        left: `${left}%`,
+                        bottom: `-${size}px`,
+                        animationDuration: `${duration}s`,
+                        animationDelay: `${delay}s`,
+                      }}
+                    />
+                  );
+                })}
               </div>
               
               {/* Central illustration/icon */}

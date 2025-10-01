@@ -2,6 +2,7 @@ import { Comfortaa, JetBrains_Mono, Playfair_Display, Poppins } from "next/font/
 import "remixicon/fonts/remixicon.css";
 import "./globals.css";
 import "./landing.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const comfortaa = Comfortaa({
   variable: "--font-comfortaa",
@@ -38,7 +39,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${comfortaa.variable} ${playfair.variable} ${jetbrainsMono.variable} ${poppins.variable} antialiased`}
       >
-        {children}
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+          {children}
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

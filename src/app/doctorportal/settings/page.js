@@ -6,6 +6,7 @@ import SettingsHeader from "@/components/DoctorPortal/settings/SettingHeader";
 import ProfileInformation from "@/components/DoctorPortal/settings/ProfileInformation";
 import AddressInformation from "@/components/DoctorPortal/settings/AddressInformation";
 import VoiceSamples from "@/components/DoctorPortal/settings/VoiceSamples";
+import GenderSection from "@/components/DoctorPortal/settings/GenderSection";
 
 export default function SettingsPage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -31,6 +32,7 @@ export default function SettingsPage() {
         onCancel={handleCancel}
       />
       <ProfileInformation isEditing={isEditing} />
+      <GenderSection isEditing={isEditing} />
       <AddressInformation isEditing={isEditing} />
       <VoiceSamples isEditing={isEditing} />
     </Layout>

@@ -14,7 +14,6 @@ const AddressInformation = ({ isEditing }) => {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
           <input
-            disabled={!isEditing}
             value={street}
             onChange={(e) => setStreet(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
@@ -25,7 +24,6 @@ const AddressInformation = ({ isEditing }) => {
         {/* City / State / Zip */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input
-            disabled={!isEditing}
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="City"
@@ -33,7 +31,6 @@ const AddressInformation = ({ isEditing }) => {
             type="text"
           />
           <input
-            disabled={!isEditing}
             value={state}
             onChange={(e) => setState(e.target.value)}
             placeholder="State"
@@ -41,7 +38,6 @@ const AddressInformation = ({ isEditing }) => {
             type="text"
           />
           <input
-            disabled={!isEditing}
             value={zip}
             onChange={(e) => setZip(e.target.value)}
             placeholder="ZIP Code"
