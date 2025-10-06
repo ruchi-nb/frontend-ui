@@ -4,7 +4,7 @@ import React from 'react';
 
 const HosNavbar = () => {
   return (
-    <header className="bg-white shadow-sm border-b border-stone-200">
+    <header className="bg-[#E6EEF8] shadow-sm border-b border-stone-200">
       <div className="flex items-center justify-around px-4 py-3">
         <div className="flex items-center space-x-4">
           <button className="p-2 rounded-md text-slate-400 hover:text-slate-600 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-teal-500 lg:hidden">

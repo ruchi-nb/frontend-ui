@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Landing/Navbar";
 import Footer from "@/components/Landing/Footer";
+import { logout as apiLogout, clearTokens } from "@/data/api";
 
 const portalNavItems = [
   { type: "link", path: "/doctorportal", label: "Home" },
@@ -12,10 +13,14 @@ const portalNavItems = [
 export default function DoctorPortalLayout({ children }) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn"); 
+  const handleLogout = async () => {
+    try {
+      await apiLogout();
+    } catch (_) {}
+    clearTokens();
+    localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userRole");
-    router.push("/"); 
+    router.push("/");
   };
 
   return (

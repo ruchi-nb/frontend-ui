@@ -12,7 +12,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-[#004dd6] text-white">
 
       {/* Footer Bottom Section */}
       <div >

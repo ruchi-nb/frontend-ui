@@ -3,6 +3,8 @@ import "remixicon/fonts/remixicon.css";
 import "./globals.css";
 import "./landing.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { UserProvider } from "@/data/UserContext";
+import ErrorBoundary from "@/components/common/ErrorBoundary"; 
 
 const comfortaa = Comfortaa({
   variable: "--font-comfortaa",
@@ -40,7 +42,11 @@ export default function RootLayout({ children }) {
         className={`${comfortaa.variable} ${playfair.variable} ${jetbrainsMono.variable} ${poppins.variable} antialiased`}
       >
         <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
-          {children}
+          <ErrorBoundary>
+            <UserProvider>
+              {children}
+            </UserProvider>
+          </ErrorBoundary>
         </GoogleOAuthProvider>
       </body>
     </html>

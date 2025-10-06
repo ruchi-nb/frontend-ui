@@ -66,4 +66,4 @@ export default function ScrollRevealCTA() {
       <LoginPopup open={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
   );
-}
+} 

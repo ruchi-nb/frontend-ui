@@ -5,6 +5,7 @@ import { ArrowRight, Clock, Shield, Calendar, Sparkles } from "lucide-react";
 import GradientButton from "../common/GradientButton";
 import LoginPopup from "@/components/Landing/LoginPopUp";
 import WavyDivider from "@/components/common/WavyDivider";
+import "@/app/globals.css";
 
 export default function HeroSection() {
   const heroRef = useRef(null);

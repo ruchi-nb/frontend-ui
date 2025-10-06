@@ -1,61 +1,93 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import DashboardHeader from "@/components/DoctorPortal/home/DashboardHeader";
 import StatCard from "@/components/DoctorPortal/home/StatCards";
 import { patients } from "@/data/patients";
 import TranscriptModal from "@/components/DoctorPortal/home/TranscriptModal";
 import PatientCard from "@/components/DoctorPortal/home/PatientCard";
 import { User, FileText, Layers } from "lucide-react";
+import { getDoctorProfile, listDoctorPatients } from "@/data/api";
 
 export default function DoctorPortalPage() {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
+  const [doctor, setDoctor] = useState(null);
+  const [doctorPatients, setDoctorPatients] = useState(patients);
 
-  const user = { 
-    name: "Emily Chen", 
-    firstLogin: false,
-    patientCount: patients.length,
-    transcriptCount: patients.reduce((sum, p) => sum + (p.transcripts?.length || 0), 0)
-  };
+  useEffect(() => {
+    let mounted = true;
+    async function init() {
+      try {
+        const profile = await getDoctorProfile();
+        if (!mounted) return;
+        setDoctor(profile);
+      } catch (_) {}
+      try {
+        const rows = await listDoctorPatients();
+        if (!mounted) return;
+        // Map backend rows to UI shape minimally (id, name, specialty optional)
+        const mapped = Array.isArray(rows)
+          ? rows.map((r) => ({
+              id: r.user_id,
+              name: r.username || r.email || `Patient ${r.user_id}`,
+              specialty: "All",
+              transcripts: [],
+            }))
+          : patients;
+        setDoctorPatients(mapped);
+      } catch (_) {
+        setDoctorPatients(patients);
+      }
+    }
+    init();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const specialties = useMemo(
-    () => ["All", ...new Set(patients.map((p) => p.specialty))],
-    []
+    () => ["All", ...new Set((doctorPatients || []).map((p) => p.specialty))],
+    [doctorPatients]
   );
 
   const filteredPatients =
     selectedSpecialty === "All"
-      ? patients
-      : patients.filter((p) => p.specialty === selectedSpecialty);
+      ? doctorPatients
+      : (doctorPatients || []).filter((p) => p.specialty === selectedSpecialty);
 
   const stats = useMemo(
     () => [
       {
         title: "Total Patients",
-        value: patients.length,
+        value: (doctorPatients || []).length,
         icon: User,
         iconColor: "text-[#ecab1c]",
       },
       {
         title: "Total Transcripts",
-        value: patients.reduce((sum, p) => sum + (p.transcripts?.length || 0), 0),
+        value: (doctorPatients || []).reduce((sum, p) => sum + (p.transcripts?.length || 0), 0),
         icon: FileText,
         iconColor: "text-[#ecab1c]",
       },
       {
         title: "Specialties",
-        value: specialties.length - 1,
+        value: Math.max(0, specialties.length - 1),
         icon: Layers,
         iconColor: "text-[#ecab1c]",
       },
     ],
-    [patients, specialties]
+    [doctorPatients, specialties]
   );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-[#3d85c6]  to-[#101828]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <DashboardHeader user={user} />
+        <DashboardHeader user={{
+          name: doctor?.username || doctor?.email || "Doctor",
+          firstLogin: false,
+          patientCount: (doctorPatients || []).length,
+          transcriptCount: (doctorPatients || []).reduce((sum, p) => sum + (p.transcripts?.length || 0), 0),
+        }} />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

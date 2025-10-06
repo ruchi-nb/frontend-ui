@@ -8,6 +8,7 @@ import DoctorsManagementHeader from "@/components/Hospital/Doctor/ManagementHead
 import DoctorStats from "@/components/Hospital/Doctor/DoctorStats";
 import DoctorFilters from "@/components/Hospital/Doctor/DoctorFilters";
 import DoctorTable from "@/components/Hospital/Doctor/DoctorTable";
+import Footer from "@/components/Landing/Footer";
 
 // Normalize languages field to always be an array
 const doctorData = rawDoctors.map((doc) => ({
@@ -45,7 +46,7 @@ export default function Page1() {
       </div>
       <div className="flex-1 flex flex-col overflow-hidden">
         <HosNavbar />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-stone-50">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#E6EEF8]">
           <div className="p-6 max-w-7xl mx-auto">
             <DoctorsManagementHeader />
             <DoctorStats />
@@ -68,6 +69,7 @@ export default function Page1() {
               onDelete={handleDelete}
             />
           </div>
+          <Footer />
         </main>
       </div>
     </div>

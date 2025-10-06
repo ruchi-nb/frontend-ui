@@ -1,9 +1,43 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { listHospitalDoctors } from '@/data/api';
+import { useUser } from '@/data/UserContext';
 
 const Dashboard = () => {
-  // Sample data for the weekly usage
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useUser();
+
+  useEffect(() => {
+    async function loadHospitalDoctors() {
+      try {
+        // Get hospital_id from user context
+        const hospitalId = user?.hospital_id || user?.hospital_roles?.[0]?.hospital_id;
+        
+        if (!hospitalId) {
+          console.error("No hospital ID found for user");
+          setLoading(false);
+          return;
+        }
+
+        const doctorsList = await listHospitalDoctors(hospitalId);
+        setDoctors(doctorsList || []);
+      } catch (error) {
+        console.error("Failed to load hospital doctors:", error);
+        setDoctors([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Only load if user is available
+    if (user) {
+      loadHospitalDoctors();
+    }
+  }, [user]);
+
+  // Sample data for the weekly usage (keeping mock data for now)
   const weeklyData = [
     { day: 'Mon', consultations: 120, doctors: 18, percentage: '66.6667%' },
     { day: 'Tue', consultations: 145, doctors: 20, percentage: '80.5556%' },
@@ -111,7 +145,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Weekly Usage Overview */}
       <div className="lg:col-span-2">
         <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
@@ -157,7 +191,9 @@ const Dashboard = () => {
                 <div className="text-xs text-slate-500">Total Consultations</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-slate-900">24</div>
+                <div className="text-2xl font-bold text-slate-900">
+                  {loading ? "..." : doctors.length}
+                </div>
                 <div className="text-xs text-slate-500">Active Doctors</div>
               </div>
             </div>
@@ -165,7 +201,7 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Recent Activity */}
+      {/* Recent Activity
       <div>
         <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h3>
@@ -184,7 +220,7 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

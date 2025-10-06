@@ -9,9 +9,9 @@ export default function FormHeader() {
           <ArrowLeft className="h-5 w-5" />
         </button>
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Add New Doctor</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Add New User</h1>
         <p className="text-gray-600 mt-2">
-          Create a new AI doctor avatar for your platform
+          Create a new user and assign role-based details
         </p>
       </div>
     </div>

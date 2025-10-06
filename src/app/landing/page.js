@@ -15,13 +15,13 @@ const landingNavItems = [
   { type: "register", label: "Register", variant: "gradient" }
 ];
 
-export default function Home({ onLogin }) {
+export default function Home() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden">
-        <Navbar navItems={landingNavItems} onLogin={onLogin} />
+        <Navbar navItems={landingNavItems} />
         <HeroSection />
-        <HowItWorks id="how-it-works" onLogin={onLogin} />
+        <HowItWorks id="how-it-works" />
         <WhyChoose id="benefits" />
         <SidePop />
         <Specialties id="specialties" />

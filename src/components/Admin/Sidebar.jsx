@@ -75,7 +75,17 @@ const Sidebar = () => {
       <div className="px-6 py-4 border-t border-[#009689]/30">
         <button
           className="flex items-center gap-3 text-sm font-medium text-red-400 hover:text-red-600 transition-colors"
-          onClick={() => router.push("/")}
+          onClick={async () => {
+            try {
+              const { logout } = await import("@/data/api");
+              await logout();
+              localStorage.removeItem("isLoggedIn");
+              router.push("/");
+            } catch (error) {
+              console.error("Logout failed:", error);
+              router.push("/");
+            }
+          }}
         >
           <LogOut className="w-5 h-5" />
           Logout

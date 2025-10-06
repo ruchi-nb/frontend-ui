@@ -1,10 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getDoctorProfile, updateDoctorProfile } from '@/data/api';
 
 const ProfileInformation = ({ isEditing }) => {
-  const [firstName, setFirstName] = useState("John");
-  const [lastName, setLastName] = useState("Doe");
-  const [email] = useState("a@gmail.com"); // fixed, not editable
-  const [phone, setPhone] = useState("1234567890");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    async function loadDoctorProfile() {
+      try {
+        const profile = await getDoctorProfile();
+        setFirstName(profile.first_name || "");
+        setLastName(profile.last_name || "");
+        setEmail(profile.email || "");
+        setPhone(profile.phone || "");
+      } catch (error) {
+        console.error("Failed to load doctor profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDoctorProfile();
+  }, []);
+
+  const handleSave = async () => {
+    if (!isEditing) return;
+    
+    setSaving(true);
+    try {
+      await updateDoctorProfile({
+        first_name: firstName,
+        last_name: lastName,
+        phone: phone,
+      });
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      alert("Failed to update profile. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="animate-pulse">
+            <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <div className="h-20 bg-gray-200 rounded mb-6"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-10 bg-gray-200 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -45,6 +102,7 @@ const ProfileInformation = ({ isEditing }) => {
             <input
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
+              disabled={!isEditing}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
               type="text"
             />
@@ -56,6 +114,7 @@ const ProfileInformation = ({ isEditing }) => {
             <input
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
+              disabled={!isEditing}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
               type="text"
             />
@@ -79,11 +138,25 @@ const ProfileInformation = ({ isEditing }) => {
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              disabled={!isEditing}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
               type="tel"
             />
           </div>
         </div>
+
+        {/* Save Button */}
+        {isEditing && (
+          <div className="flex justify-end pt-4">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,13 +1,19 @@
 // file: frontend/src/components/Landing/RegisterModal.jsx
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { registerPatient } from "@/data/api";
+import { useUser } from "@/data/UserContext";
 import { useRouter } from "next/navigation";
-import { registerPatient, loginWithGoogle } from "@/data/api";
-import { GoogleLogin } from "@react-oauth/google";
+import LoginPopup from "@/components/Landing/LoginPopUp";
+import { Eye, EyeOff, User, Mail, Lock, Phone, AlertCircle, CheckCircle } from "lucide-react";
 
-export default function RegisterModal({ open, onClose }) {
+export default function RegisterModal({ open, onClose, onLogin }) {
   const router = useRouter();
+  const { login } = useUser();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -16,296 +22,462 @@ export default function RegisterModal({ open, onClose }) {
     first_name: "",
     last_name: "",
     phone: "",
-    dob: "",
-    address: "",
-    agree: false,
+    hospital_id: null 
   });
-  const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
 
-  if (!open) return null;
+  const [validationErrors, setValidationErrors] = useState({});
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
-  const submitLabel = "Create Account";
-
-  // Validation helpers
-  const isTextValid = (v) => /^[A-Za-z\s'-]+$/.test(v);
-  const isEmailValid = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-  const isPhoneValid = (v) => /^[0-9]+$/.test(v);
-  const isUsernameValid = (v) => /^[a-zA-Z0-9_]+$/.test(v);
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    let newValue = value;
-    let error;
-
-    // Field-specific validation
-    if ((name === "first_name" || name === "last_name") && value) {
-      newValue = value.replace(/[^A-Za-z\s'-]/g, "");
-      if (!isTextValid(newValue)) error = "No numbers or special characters allowed.";
-    }
-    
-    if (name === "username" && value) {
-      newValue = value.replace(/[^a-zA-Z0-9_]/g, "");
-      if (!isUsernameValid(newValue)) error = "Only letters, numbers, and underscores allowed.";
-    }
-    
-    if (name === "phone" && value) {
-      newValue = value.replace(/[^0-9]/g, "");
-      if (!isPhoneValid(newValue)) error = "Phone must contain only numbers.";
-    }
-    
-    if (name === "email" && value && !isEmailValid(value)) {
-      error = "Enter a valid email address.";
-    }
-    
-    if (name === "password" && value && value.length < 6) {
-      error = "Password must be at least 6 characters.";
-    }
-    
-    if (name === "confirmPassword" && value && value !== formData.password) {
-      error = "Passwords do not match.";
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : newValue,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: error,
-    }));
+  // Switch to login modal
+  const switchToLogin = () => {
+    onClose(); // Close register modal
+    setIsLoginOpen(true); // Open login modal
   };
+
+  // Close modal when clicking overlay
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  // Close modal with Escape key
+  useEffect(() => {
+    const handleEscapeKey = (e) => {
+      if (e.key === 'Escape' && open) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [open, onClose]);
 
   const validateForm = () => {
-    const newErrors = {};
-    
-    // Required fields
-    if (!formData.username) newErrors.username = "Username is required.";
-    if (!formData.email || !isEmailValid(formData.email)) newErrors.email = "Valid email is required.";
-    if (!formData.password) newErrors.password = "Password is required.";
-    if (!formData.confirmPassword) newErrors.confirmPassword = "Please confirm your password.";
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
-    if (!formData.first_name) newErrors.first_name = "First name is required.";
-    if (!formData.last_name) newErrors.last_name = "Last name is required.";
-    if (!formData.phone || !isPhoneValid(formData.phone)) newErrors.phone = "Valid phone is required.";
-    if (!formData.dob) newErrors.dob = "Date of birth is required.";
-    
-    if (!formData.agree) newErrors.agree = "You must agree to the terms.";
+    const errors = {};
 
-    return newErrors;
+    // Username validation
+    if (!formData.username.trim()) {
+      errors.username = "Username is required";
+    } else if (formData.username.length < 3) {
+      errors.username = "Username must be at least 3 characters";
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      errors.username = "Username can only contain letters, numbers, underscores, and hyphens";
+    }
+
+    // Email validation
+    if (!formData.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Please enter a valid email address";
+    }
+
+    // Password validation
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      errors.password = "Password must be at least 8 characters";
+    }
+
+    // Confirm password validation
+    if (!formData.confirmPassword) {
+      errors.confirmPassword = "Please confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    // Name validation
+    if (!formData.first_name.trim()) {
+      errors.first_name = "First name is required";
+    }
+
+    if (!formData.last_name.trim()) {
+      errors.last_name = "Last name is required";
+    }
+
+    // Phone validation (optional but if provided, should be valid)
+    if (formData.phone && !/^[\+]?[\d\s\-\(\)]{7,20}$/.test(formData.phone)) {
+      errors.phone = "Please enter a valid phone number";
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async () => {
-    const newErrors = validateForm();
-    setErrors(newErrors);
+  const handleLoginSuccess = async (profile) => {
+    setIsLoginOpen(false);
+
+    const role = profile._detectedRole || profile.global_role?.role_name || 'patient';
     
-    if (Object.keys(newErrors).length > 0) return;
+    switch (role) {
+      case 'superadmin':
+        router.push('/admin');
+        break;
+      case 'hospital_admin':
+        router.push('/Hospital');
+        break;
+      case 'doctor':
+        router.push('/doctorportal');
+        break;
+      case 'patient':
+      default:
+        router.push('/patientportal');
+        break;
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear validation error for this field
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
+
+    // Clear success/error messages
+    if (error) setError("");
+    if (success) setSuccess("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      setError("Please fix the validation errors below");
+      return;
+    }
 
     setLoading(true);
+    setError("");
+    setSuccess("");
+
     try {
-      const registrationData = {
-        username: formData.username,
-        email: formData.email,
+      console.log("Submitting registration with data:", formData);
+      
+      // Prepare payload for backend
+      const payload = {
+        username: formData.username.trim(),
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        phone: formData.phone,
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim(),
+        phone: formData.phone.trim() || null,
+        hospital_id: formData.hospital_id || null
       };
 
-      await registerPatient(registrationData);
-      onClose();
-    } catch (e) {
-      alert(e?.message || "Registration failed");
+      const result = await registerPatient(payload);
+      console.log("Registration successful:", result);
+
+      setSuccess("Registration successful! You can now log in.");
+      
+      // Clear form
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        first_name: "",
+        last_name: "",
+        phone: "",
+        hospital_id: null
+      });
+
+      // Store registration data for potential UserDetails creation
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('pending_user_details', JSON.stringify({
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+          phone: payload.phone,
+          username: payload.username
+        }));
+      }
+
+      // Auto-login after successful registration
+      setTimeout(async () => {
+        try {
+          await login({ email: payload.email, password: payload.password });
+          onClose();
+          if (onLogin) onLogin();
+        } catch (loginError) {
+          console.error("Auto-login failed:", loginError);
+          // Don't show error for auto-login failure, user can manually login
+        }
+      }, 2000);
+
+    } catch (error) {
+      console.error("Registration failed:", error);
+      setError(error.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleSignUpSuccess = async (credentialResponse) => {
-    try {
-      setLoading(true);
-      const idToken = credentialResponse.credential;
-      await loginWithGoogle(idToken);
-      localStorage.setItem("isLoggedIn", "true");
-      router.push("/patientportal");
+  const handleClose = () => {
+    if (!loading) {
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        first_name: "",
+        last_name: "",
+        phone: "",
+        hospital_id: null
+      });
+      setError("");
+      setSuccess("");
+      setValidationErrors({});
       onClose();
-    } catch (err) {
-      console.error("Google sign up failed", err);
-      setErrors({ general: "Google sign up failed. Please try again." });
-    } finally {
-      setLoading(false);
     }
   };
+
+  // Don't render if not open
+  if (!open) {
+    return null;
+  }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 font-gotham"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white w-full max-w-lg rounded-2xl shadow-lg border border-[#c8c8c8] p-8 max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-[2.5rem] font-normal font-poppins text-[#000] leading-snug">
-            {submitLabel}
-          </h3>
-          <button
-            onClick={onClose}
-            className="text-[#767676] hover:text-[#000] text-2xl font-light"
-            aria-label="Close modal"
-          >
-            &times;
-          </button>
-        </div>
-        <p className="text-[1rem] font-light text-[#767676] mb-8 leading-relaxed">
-          {"Join thousands of patients getting quality healthcare"}
-        </p>
+    <>
+      {/* Modal Overlay */}
+      <div className="fixed inset-0 bg-black/30 z-50" aria-hidden="true" onClick={handleOverlayClick} />
+      
+      {/* Modal Container */}
+      <div className="fixed inset-0 flex items-center justify-center p-4 z-50">
+        <div className="mx-auto max-w-md space-y-4 bg-white rounded-2xl p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-[#004dd6] to-[#3d85c6]">
+            Create Account
+          </h2>
 
-        {/* Form */}
-        <div className="grid grid-cols-1 gap-4 mb-8">
-          {/* Account Information */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <input
-                name="username"
-                placeholder="Username"
-                value={formData.username}
-                onChange={handleInputChange}
-                className={`border px-4 py-3 rounded-lg w-full text-black placeholder-[#c8c8c8] focus:outline-none ${
-                  errors.username ? "border-[#9f0202]" : "border-[#c8c8c8]"
-                }`}
-              />
-              {errors.username && <span className="text-[#9f0202] text-xs">{errors.username}</span>}
+          {error && (
+            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm">{error}</span>
             </div>
-            <div>
-              <input
-                name="email"
-                type="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={`border px-4 py-3 rounded-lg w-full text-black placeholder-[#c8c8c8] focus:outline-none ${
-                  errors.email ? "border-[#9f0202]" : "border-[#c8c8c8]"
-                }`}
-              />
-              {errors.email && <span className="text-[#9f0202] text-xs">{errors.email}</span>}
+          )}
+
+          {success && (
+            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-green-700">
+              <CheckCircle className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm">{success}</span>
             </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  First Name *
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      validationErrors.first_name ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="John"
+                    disabled={loading}
+                  />
+                </div>
+                {validationErrors.first_name && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.first_name}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Last Name *
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      validationErrors.last_name ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Doe"
+                    disabled={loading}
+                  />
+                </div>
+                {validationErrors.last_name && (
+                  <p className="text-red-500 text-xs mt-1">{validationErrors.last_name}</p>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Username *
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    validationErrors.username ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="johndoe"
+                  disabled={loading}
+                />
+              </div>
+              {validationErrors.username && (
+                <p className="text-red-500 text-xs mt-1">{validationErrors.username}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email Address *
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    validationErrors.email ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="john@example.com"
+                  disabled={loading}
+                />
+              </div>
+              {validationErrors.email && (
+                <p className="text-red-500 text-xs mt-1">{validationErrors.email}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number
+              </label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    validationErrors.phone ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="+1 (555) 123-4567"
+                  disabled={loading}
+                />
+              </div>
+              {validationErrors.phone && (
+                <p className="text-red-500 text-xs mt-1">{validationErrors.phone}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password *
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    validationErrors.password ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="Enter your password"
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  disabled={loading}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {validationErrors.password && (
+                <p className="text-red-500 text-xs mt-1">{validationErrors.password}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Confirm Password *
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    validationErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="Confirm your password"
+                  disabled={loading}
+                />
+              </div>
+              {validationErrors.confirmPassword && (
+                <p className="text-red-500 text-xs mt-1">{validationErrors.confirmPassword}</p>
+              )}
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-[#004dd6] to-[#3d85c6] text-white rounded-lg hover:from-[#003cb3] hover:to-[#2d6ba3] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading}
+              >
+                {loading ? "Creating Account..." : "Create Account"}
+              </button>
+            </div>
+          </form>
+
+          <div className="text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <button
+              onClick={switchToLogin}
+              className="text-blue-600 hover:text-blue-800 font-medium"
+              disabled={loading}
+            >
+              Sign in
+            </button>
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <input
-                name="password"
-                type="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className={`border px-4 py-3 rounded-lg w-full text-black placeholder-[#c8c8c8] focus:outline-none ${
-                  errors.password ? "border-[#9f0202]" : "border-[#c8c8c8]"
-                }`}
-              />
-              {errors.password && <span className="text-[#9f0202] text-xs">{errors.password}</span>}
-            </div>
-            <div>
-              <input
-                name="confirmPassword"
-                type="password"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className={`border px-4 py-3 rounded-lg w-full text-black placeholder-[#c8c8c8] focus:outline-none ${
-                  errors.confirmPassword ? "border-[#9f0202]" : "border-[#c8c8c8]"
-                }`}
-              />
-              {errors.confirmPassword && <span className="text-[#9f0202] text-xs">{errors.confirmPassword}</span>}
-            </div>
-          </div>
-
-          {/* Personal Information */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <input
-                name="first_name"
-                placeholder="First Name"
-                value={formData.first_name}
-                onChange={handleInputChange}
-                className={`border px-4 py-3 rounded-lg w-full text-black placeholder-[#c8c8c8] focus:outline-none ${
-                  errors.first_name ? "border-[#9f0202]" : "border-[#c8c8c8]"
-                }`}
-              />
-              {errors.first_name && <span className="text-[#9f0202] text-xs">{errors.first_name}</span>}
-            </div>
-            <div>
-              <input
-                name="last_name"
-                placeholder="Last Name"
-                value={formData.last_name}
-                onChange={handleInputChange}
-                className={`border px-4 py-3 rounded-lg w-full text-black placeholder-[#c8c8c8] focus:outline-none ${
-                  errors.last_name ? "border-[#9f0202]" : "border-[#c8c8c8]"
-                }`}
-              />
-              {errors.last_name && <span className="text-[#9f0202] text-xs">{errors.last_name}</span>}
-            </div>
-          </div>
-
-          {["phone", "dob"].map((field) => (
-            <div key={field}>
-              <input
-                name={field}
-                type={field === "dob" ? "date" : "text"}
-                placeholder={field.replace(/^\w/, (c) => c.toUpperCase())}
-                value={formData[field]}
-                onChange={handleInputChange}
-                className={`border px-4 py-3 rounded-lg w-full text-black placeholder-[#c8c8c8] focus:outline-none ${
-                  errors[field] ? "border-[#9f0202]" : "border-[#c8c8c8]"
-                }`}
-              />
-              {errors[field] && <span className="text-[#9f0202] text-xs">{errors[field]}</span>}
-            </div>
-          ))}
-
-          <label className="flex items-start gap-2 text-sm text-[#767676] cursor-pointer">
-            <input
-              name="agree"
-              type="checkbox"
-              checked={formData.agree}
-              onChange={handleInputChange}
-              className="mt-1"
-            />
-            <span>I agree to the Terms of Service and Privacy Policy</span>
-          </label>
-          {errors.agree && <span className="text-[#9f0202] text-xs">{errors.agree}</span>}
-        </div>
-
-        {/* Submit */}
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="w-full rounded-full border border-[#c8c8c8] text-black py-3 hover:bg-gradient-to-r hover:from-[#004dd6] hover:to-[#3d85c6] hover:text-white transition-all mb-3 disabled:opacity-50"
-        >
-          {loading ? "Processing..." : submitLabel}
-        </button>
-
-        {/* Google Sign Up */}
-        <div className="w-full">
-          <GoogleLogin
-            onSuccess={handleGoogleSignUpSuccess}
-            onError={() => {
-              console.error("Google sign up failed");
-              setErrors({ general: "Google sign up failed. Please try again." });
-            }}
-            theme="outline"
-            size="large"
-            width="100%"
-            text="signup_with"
-            shape="pill"
-          />
         </div>
       </div>
-    </div>
+
+      <LoginPopup
+        open={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onLogin={handleLoginSuccess}
+      />
+    </>
   );
 }

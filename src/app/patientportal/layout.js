@@ -31,13 +31,15 @@ function PortalContent({ children }) {
       // Clear any invalid tokens
       clearTokens();
       localStorage.removeItem("isLoggedIn");
+      // Redirect to home page
+      router.push("/");
     }
     
     const timer = setTimeout(() => {
       setLoading(false);
     }, 2000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [router]);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -53,6 +55,12 @@ function PortalContent({ children }) {
       }, 1500);
     }
   };
+
+  // In your patientportal/layout.js, add this:
+  useEffect(() => {
+    console.log("🔍 PatientPortal Layout - Current tokens:", getStoredTokens());
+    console.log("🔍 PatientPortal Layout - isLoggedIn:", localStorage.getItem("isLoggedIn"));
+  }, []);
 
   if (loading || loggingOut) {
     return (
@@ -70,8 +78,18 @@ function PortalContent({ children }) {
   }
 
   if (!isAuthenticated) {
-    router.push("/");
-    return null;
+    return (
+      <div className="h-screen bg-[#fdfeff] flex items-center justify-center">
+        <div className="text-center">
+          <LifeLine
+            color="#b9d0f5"
+            size="large"
+            text="Redirecting..."
+            textColor="#b9d0f5"
+          />
+        </div>
+      </div>
+    );
   }
 
   return (

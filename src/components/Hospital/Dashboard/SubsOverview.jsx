@@ -5,7 +5,7 @@ import {
   Users,
   Clock,
   Shield,
-  DollarSign,
+  IndianRupee,
 } from "lucide-react";
 
 const SubscriptionOverview = () => {
@@ -81,13 +81,13 @@ const SubscriptionOverview = () => {
               <p className="text-sm font-medium text-slate-600 mb-1">
                 Monthly Cost
               </p>
-              <p className="text-3xl font-bold text-slate-900 mb-2">$299</p>
+              <p className="text-3xl font-bold text-slate-900 mb-2">₹299</p>
               <p className="text-sm font-medium text-slate-600">
                 Next billing Feb 15
               </p>
             </div>
             <div className="p-3 rounded-lg bg-teal-50 text-teal-600">
-              <DollarSign className="h-6 w-6" aria-hidden="true" />
+              <IndianRupee className="h-6 w-6" aria-hidden="true" />
             </div>
           </div>
         </div>
