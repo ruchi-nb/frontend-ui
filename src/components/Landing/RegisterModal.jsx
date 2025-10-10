@@ -1,7 +1,7 @@
 // file: frontend/src/components/Landing/RegisterModal.jsx
 "use client";
 import { useState, useEffect } from "react";
-import { registerPatient } from "@/data/api";
+import { registerPatient } from "@/data/api-patient";
 import { useUser } from "@/data/UserContext";
 import { useRouter } from "next/navigation";
 import LoginPopup from "@/components/Landing/LoginPopUp";

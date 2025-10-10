@@ -5,9 +5,14 @@ import { Building, Users } from "lucide-react";
 
 const navItems = [
   {
+    name: "Admin Profile",
+    icon: Users,
+    path: "/Hospital/settings",
+  },
+  {
     name: "Hospital Profile & Branding",
     icon: Building,
-    path: "/Hospital/settings",
+    path: "/Hospital/settings/adprofile",
   },
   {
     name: "Security",
@@ -34,15 +39,15 @@ export default function SidebarNav() {
           <button
             key={item.name}
             onClick={() => router.push(item.path)}
-            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+            className={`w-full cursor-pointer flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
               isActive
-                ? "bg-teal-50 text-teal-700 border border-teal-200"
+                ? "bg-blue-50 text-blue-700 border border-blue-200"
                 : "text-slate-700 hover:bg-stone-50"
             }`}
           >
             <item.icon
               className={`mr-3 h-5 w-5 ${
-                isActive ? "text-teal-700" : "text-slate-400"
+                isActive ? "text-blue-700" : "text-slate-400"
               }`}
               aria-hidden="true"
             />

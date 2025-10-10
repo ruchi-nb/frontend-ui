@@ -56,7 +56,7 @@ export default function Profile() {
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium flex items-center space-x-2"
+              className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium flex items-center space-x-2"
             >
               <Upload className="h-4 w-4" />
               <span>Upload Logo</span>
@@ -87,7 +87,7 @@ export default function Profile() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
+            <label className="block text-sm font-medium cursor-not-allowed text-slate-700 mb-2">
               Email Address
             </label>
             <input
@@ -122,7 +122,7 @@ export default function Profile() {
 
         {/* Save Button */}
         <div className="flex justify-end">
-          <button className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium flex items-center space-x-2">
+          <button className="bg-blue-600 cursor-pointer text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium flex items-center space-x-2">
             <Save className="h-4 w-4" />
             <span>Save Changes</span>
           </button>
@@ -149,7 +149,7 @@ export default function Profile() {
             <div
               onDrop={handleDrop}
               onDragOver={handleDragOver}
-              className="border-2 border-dashed border-stone-300 rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-teal-500"
+              className="border-2 border-dashed border-stone-300 rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-500"
               onClick={() => fileInputRef.current?.click()}
             >
               {preview ? (
@@ -177,13 +177,13 @@ export default function Profile() {
             <div className="flex justify-end mt-6 space-x-3">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-lg border border-stone-300 text-slate-700 hover:bg-stone-100"
+                className="px-4 py-2 cursor-pointer rounded-lg border border-stone-300 text-slate-700 hover:bg-red-100"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-lg bg-teal-600 text-white hover:bg-teal-700"
+                className="px-4 py-2 cursor-pointer rounded-lg bg-blue-600 text-white hover:bg-teal-700"
               >
                 Save Logo
               </button>

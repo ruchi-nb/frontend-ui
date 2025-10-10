@@ -1,19 +1,23 @@
 'use client';
-import React, { useMemo, useState } from "react";
-import { User, FileText, Save, Key } from "lucide-react";
+import React, { useMemo, useState, useContext } from "react";
+import { User, FileText, Save, Key, X } from "lucide-react";
+import { addDoctorToHospital } from '@/data/api-hospital-admin';
+
+// Mock context for hospital ID (you might have this in your app)
+const HospitalContext = React.createContext();
 
 const ROLES = ["patient", "doctor", "nurse", "lab technician"];
 
 const SPECIALTIES = [
-  "Cardiology",
-  "Neurology",
-  "Pediatrics",
-  "Orthopedics",
-  "Dermatology",
-  "Psychiatry",
-  "Radiology",
-  "Internal Medicine",
-  "General Surgery",
+  { id: "cardiology", name: "Cardiology" },
+  { id: "neurology", name: "Neurology" },
+  { id: "pediatrics", name: "Pediatrics" },
+  { id: "orthopedics", name: "Orthopedics" },
+  { id: "dermatology", name: "Dermatology" },
+  { id: "psychiatry", name: "Psychiatry" },
+  { id: "radiology", name: "Radiology" },
+  { id: "internal-medicine", name: "Internal Medicine" },
+  { id: "general-surgery", name: "General Surgery" },
 ];
 
 const INDIAN_LANGUAGES = [
@@ -36,7 +40,11 @@ function randFrom(chars, n) {
   return out;
 }
 
-const DoctorForm = () => {
+const DoctorForm = ({ onSuccess, onCancel }) => {
+  // Get hospitalId from context (you might get this from auth context or props)
+  const hospitalContext = useContext(HospitalContext);
+  const hospitalId = hospitalContext?.hospitalId || "current-hospital-id"; // Replace with actual source
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -49,11 +57,20 @@ const DoctorForm = () => {
     genMode: "pattern", // 'pattern' | 'random'
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
   const username = useMemo(() => form.email.trim(), [form.email]);
 
   const onChange = (field) => (e) => {
     const value = e?.target?.type === "checkbox" ? e.target.checked : e?.target?.value ?? e;
     setForm((f) => ({ ...f, [field]: value }));
+    // Clear messages when user starts typing
+    if (error || success) {
+      setError("");
+      setSuccess("");
+    }
   };
 
   const toggleLanguage = (lang) => {
@@ -81,30 +98,133 @@ const DoctorForm = () => {
     setForm((f) => ({ ...f, password: base || randFrom("abcdefghijkmnpqrstuvwxyz23456789", 8) }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: wire up submit to API as needed
-    // Payload example:
-    // {
-    //   firstName, lastName, email, phone, role,
-    //   specialty: isClinician ? specialty : null,
-    //   languages: isClinician ? languages : [],
-    //   credentials: { username: email, password }
-    // }
-    console.log("Create user payload", {
-      firstName: form.firstName,
-      lastName: form.lastName,
-      email: form.email,
-      phone: form.phone,
-      role: form.role,
-      specialty: isClinician ? form.specialty : null,
-      languages: isClinician ? form.languages : [],
-      credentials: { username, password: form.password },
-    });
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      // Validate required fields
+      if (!form.firstName || !form.lastName || !form.email || !form.role || !form.password) {
+        throw new Error("Please fill in all required fields");
+      }
+
+      if (isClinician && !form.specialty) {
+        throw new Error("Please select a specialty for clinician roles");
+      }
+
+      // Prepare payload according to API expectations
+      const payload = {
+        first_name: form.firstName,
+        last_name: form.lastName,
+        email: form.email,
+        phone: form.phone || undefined,
+        role: form.role,
+        // Include specialty and languages only for clinicians
+        ...(isClinician && {
+          specialty: form.specialty,
+          languages: form.languages,
+        }),
+        credentials: {
+          username: username,
+          password: form.password,
+        },
+      };
+
+      // Prepare specialty IDs array (convert specialty name to ID)
+      const specialtyIds = isClinician && form.specialty ? 
+        [SPECIALTIES.find(s => s.name === form.specialty)?.id || form.specialty] : 
+        [];
+
+      console.log("Calling API with:", {
+        hospitalId,
+        payload,
+        specialtyIds
+      });
+
+      // Call the API
+      const result = await addDoctorToHospital(hospitalId, payload, specialtyIds);
+
+      // Handle success
+      setSuccess(`User ${form.firstName} ${form.lastName} created successfully!`);
+      
+      // Call success callback if provided
+      if (onSuccess) {
+        onSuccess(result);
+      }
+
+      // Reset form after successful submission
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        role: "",
+        specialty: "",
+        languages: [],
+        password: "",
+        genMode: "pattern",
+      });
+
+    } catch (err) {
+      console.error("Failed to create user:", err);
+      setError(err.message || "Failed to create user. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      // Default cancel behavior
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        role: "",
+        specialty: "",
+        languages: [],
+        password: "",
+        genMode: "pattern",
+      });
+      setError("");
+      setSuccess("");
+    }
   };
 
   return (
     <form className="space-y-8" onSubmit={handleSubmit}>
+      {/* Status Messages */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => setError("")}
+            className="text-red-500 hover:text-red-700"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center justify-between">
+          <span>{success}</span>
+          <button
+            type="button"
+            onClick={() => setSuccess("")}
+            className="text-green-500 hover:text-green-700"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* Personal Information */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center space-x-2 mb-6">
@@ -124,7 +244,8 @@ const DoctorForm = () => {
               placeholder="Enter first name"
               value={form.firstName}
               onChange={onChange("firstName")}
-              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={loading}
+              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
           <div>
@@ -137,7 +258,8 @@ const DoctorForm = () => {
               placeholder="Enter last name"
               value={form.lastName}
               onChange={onChange("lastName")}
-              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={loading}
+              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
           <div>
@@ -150,7 +272,8 @@ const DoctorForm = () => {
               placeholder="user@hospital.com"
               value={form.email}
               onChange={onChange("email")}
-              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={loading}
+              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
           <div>
@@ -162,7 +285,8 @@ const DoctorForm = () => {
               placeholder="+91 98765 43210"
               value={form.phone}
               onChange={onChange("phone")}
-              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={loading}
+              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
 
@@ -184,7 +308,8 @@ const DoctorForm = () => {
                   languages: newRole === "patient" ? [] : f.languages,
                 }));
               }}
-              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={loading}
+              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
             >
               <option value="">Select role</option>
               {ROLES.map((r) => (
@@ -228,7 +353,8 @@ const DoctorForm = () => {
               placeholder="Click Generate or type your own"
               value={form.password}
               onChange={onChange("password")}
-              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              disabled={loading}
+              className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
           <div className="md:col-span-3">
@@ -239,7 +365,8 @@ const DoctorForm = () => {
               <select
                 value={form.genMode}
                 onChange={onChange("genMode")}
-                className="flex-1 px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={loading}
+                className="flex-1 px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
               >
                 <option value="pattern">Name+Phone Pattern</option>
                 <option value="random">Random Secure</option>
@@ -247,7 +374,8 @@ const DoctorForm = () => {
               <button
                 type="button"
                 onClick={generatePassword}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                disabled={loading}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 Generate Password
               </button>
@@ -274,12 +402,13 @@ const DoctorForm = () => {
                 required
                 value={form.specialty}
                 onChange={onChange("specialty")}
-                className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={loading}
+                className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
               >
                 <option value="">Select specialty</option>
                 {SPECIALTIES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
+                  <option key={s.id} value={s.name}>
+                    {s.name}
                   </option>
                 ))}
               </select>
@@ -296,7 +425,8 @@ const DoctorForm = () => {
                       type="checkbox"
                       checked={form.languages.includes(lang)}
                       onChange={() => toggleLanguage(lang)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      disabled={loading}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:bg-gray-100"
                     />
                     <span className="text-sm text-gray-700">{lang}</span>
                   </label>
@@ -311,19 +441,40 @@ const DoctorForm = () => {
       <div className="flex items-center justify-between pt-6 border-t border-gray-200">
         <button
           type="button"
-          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+          onClick={handleCancel}
+          disabled={loading}
+          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center space-x-2"
+          disabled={loading}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center space-x-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          <Save className="h-4 w-4" />
-          <span>Create User</span>
+          {loading ? (
+            <>
+              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Creating...</span>
+            </>
+          ) : (
+            <>
+              <Save className="h-4 w-4" />
+              <span>Create User</span>
+            </>
+          )}
         </button>
       </div>
     </form>
+  );
+};
+
+// Provider component for hospital context
+export const HospitalProvider = ({ children, hospitalId }) => {
+  return (
+    <HospitalContext.Provider value={{ hospitalId }}>
+      {children}
+    </HospitalContext.Provider>
   );
 };
 

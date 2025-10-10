@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   Users,
@@ -9,25 +10,33 @@ import {
 } from "lucide-react";
 
 const SubscriptionOverview = () => {
+
+  const router = useRouter();
+
+  const handleclick = () => {
+    router.push('/common/commingsoon')
+  }
+
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-slate-900">
           Subscription Overview
         </h2>
-        <button className="flex items-center space-x-1 text-teal-600 hover:text-teal-700 font-medium">
+        <button 
+        onClick={handleclick}
+        className="flex items-center space-x-1 text-[#004dd6] hover:text-teal-700 font-medium">
           <span>Manage Subscription</span>
           <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Doctor Slots Used Card */}
         <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <p className="text-sm font-medium text-slate-600 mb-1">
-                Doctor Slots Used
+                User Slots Used
               </p>
               <p className="text-3xl font-bold text-slate-900 mb-2">8/15</p>
               <p className="text-sm font-medium text-slate-600">
@@ -48,7 +57,7 @@ const SubscriptionOverview = () => {
                 Consultation Hours
               </p>
               <p className="text-3xl font-bold text-slate-900 mb-2">1,247</p>
-              <p className="text-sm font-medium text-teal-600">This month</p>
+              <p className="text-sm font-medium text-slate-600">This month</p>
             </div>
             <div className="p-3 rounded-lg bg-sky-50 text-sky-600">
               <Clock className="h-6 w-6" aria-hidden="true" />

@@ -37,7 +37,7 @@ export default function Departments() {
         </h2>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium flex items-center space-x-2"
+          className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium flex items-center space-x-2"
         >
           <Plus className="h-4 w-4" />
           <span>Add Department</span>
@@ -54,7 +54,7 @@ export default function Departments() {
             <span className="font-medium text-slate-900">{dept}</span>
             <button
               onClick={() => handleDelete(idx)}
-              className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+              className="p-1 cursor-pointer text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
             >
               <Trash2 className="h-4 w-4" />
             </button>
@@ -69,7 +69,7 @@ export default function Departments() {
             {/* Close Button */}
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-3 right-3 text-slate-500 hover:text-slate-700"
+              className="absolute cursor-pointer top-3 right-3 text-slate-500 hover:text-slate-700"
             >
               <X className="h-5 w-5" />
             </button>
@@ -87,7 +87,7 @@ export default function Departments() {
                   name="department"
                   type="text"
                   required
-                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Enter department name"
                 />
               </div>
@@ -96,13 +96,13 @@ export default function Departments() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-stone-300 text-slate-700 hover:bg-stone-100"
+                  className="px-4 py-2 cursor-pointer rounded-lg border border-stone-300 text-slate-700 hover:bg-red-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-teal-600 text-white hover:bg-teal-700"
+                  className="px-4 py-2 cursor-pointer rounded-lg bg-teal-600 text-white hover:bg-teal-700"
                 >
                   Add Department
                 </button>

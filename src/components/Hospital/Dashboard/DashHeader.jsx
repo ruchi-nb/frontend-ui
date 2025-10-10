@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getHospitalProfile } from "@/data/api";
+import { getHospitalProfile } from "@/data/api-hospital-admin.js";
 import { useUser } from "@/data/UserContext";
+import { useRouter } from "next/navigation";
 
 export default function DashboardHeader() {
   const [hospital, setHospital] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { user } = useUser();
+  const { user, logout } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     async function loadHospitalProfile() {
@@ -36,6 +38,12 @@ export default function DashboardHeader() {
     }
   }, [user]);
 
+  const handleLogout = () => {
+    logout();
+    // Optional: Redirect to login page or home page after logout
+    // window.location.href = "/login";
+  };
+
   if (loading) {
     return (
       <div className="mb-8">
@@ -48,18 +56,20 @@ export default function DashboardHeader() {
   }
 
   return (
-    <div className="mb-8">
-      <h1 className="text-3xl font-bold text-slate-900">
-        {hospital?.hospital_name ? `${hospital.hospital_name} Dashboard` : "Dashboard Overview"}
-      </h1>
-      <p className="text-slate-600 mt-2">
-        Welcome back! Here's what's happening with your AI doctor platform today.
-      </p>
-      {hospital?.hospital_email && (
-        <p className="text-sm text-slate-500 mt-1">
-          {hospital.hospital_email}
+    <div className="mb-8 flex justify-between items-start">
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900">
+          {hospital?.hospital_name ? `${hospital.hospital_name} Dashboard` : "Dashboard Overview"}
+        </h1>
+        <p className="text-slate-600 mt-2">
+          Welcome back! Here's what's happening with your AI doctor platform today.
         </p>
-      )}
+        {hospital?.hospital_email && (
+          <p className="text-sm text-slate-500 mt-1">
+            {hospital.hospital_email}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

@@ -50,7 +50,7 @@ export default function Navbar({ navItems = [], onLogin, onLogout }) {
                 <OutlineButton 
                   key={idx} 
                   onClick={() => handleClick(item)} 
-                  className="whitespace-nowrap py-1.5 px-3 text-sm"
+                  className="whitespace-nowrap cursor-pointer py-1.5 px-3 text-sm"
                   color={item.color}
                 >
                   {item.icon && <i className={`${item.icon} mr-2`}></i>} {item.label}
@@ -59,7 +59,7 @@ export default function Navbar({ navItems = [], onLogin, onLogout }) {
                 <GradientButton 
                   key={idx} 
                   onClick={() => handleClick(item)} 
-                  className="whitespace-nowrap py-2 px-3 text-sm"
+                  className="whitespace-nowrap cursor-pointer py-2 px-3 text-sm"
                   color={item.color}
                 >
                   {item.label}
@@ -68,7 +68,7 @@ export default function Navbar({ navItems = [], onLogin, onLogout }) {
                 <button
                   key={idx}
                   onClick={() => handleClick(item)}
-                  className="px-3 py-1.5 rounded-md text-sm font-medium whitespace-nowrap text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                  className="px-3 cursor-pointer py-1.5 rounded-md text-sm font-medium whitespace-nowrap text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                 >
                   {item.icon && <i className={`${item.icon} mr-2`}></i>} {item.label}
                 </button>

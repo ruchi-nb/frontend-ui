@@ -2,7 +2,7 @@
 export const doctors = [
   {
     id: 'emily-chen',
-    name: 'Dr. Emily Chen',
+    name: 'Emily Chen',
     specialty: 'Cardiology',
     experience: '12 years experience',
     languages: 'English, Mandarin, Spanish',
@@ -15,7 +15,7 @@ export const doctors = [
   },
   {
     id: 'james-wilson',
-    name: 'Dr. James Wilson',
+    name: 'James Wilson',
     specialty: 'General Medicine',
     experience: '8 years experience',
     languages: 'English, French',
@@ -28,7 +28,7 @@ export const doctors = [
   },
   {
     id: 'michael-rodriguez',
-    name: 'Dr. Michael Rodriguez',
+    name: 'Michael Rodriguez',
     specialty: 'Dermatology',
     experience: '15 years experience',
     languages: 'English, Spanish, Portuguese',
@@ -41,7 +41,7 @@ export const doctors = [
   },
   {
     id: 'tarun-singh',
-    name: 'Dr. Tarun Singh',
+    name: 'Tarun Singh',
     specialty: 'Orthopedics',
     experience: '18 years experience',
     languages: 'English',
@@ -54,7 +54,7 @@ export const doctors = [
   },
   {
     id: 'devangi-patel',
-    name: 'Dr. Devangi Patel',
+    name: 'Devangi Patel',
     specialty: 'Neurology',
     experience: '14 years experience',
     languages: 'English, Hindi, Gujarati',
@@ -67,7 +67,7 @@ export const doctors = [
   },
   {
     id: 'sarah-johnson',
-    name: 'Dr. Sarah Johnson',
+    name: 'Sarah Johnson',
     specialty: 'Pediatrics',
     experience: '10 years experience',
     languages: 'English, Spanish',
@@ -80,7 +80,7 @@ export const doctors = [
   },
   {
     id: 'kshitij-mehta',
-    name: 'Dr. Kshitij Mehta',
+    name: 'Kshitij Mehta',
     specialty: 'Oncology',
     experience: '16 years experience',
     languages: 'English, Korean',
@@ -93,7 +93,7 @@ export const doctors = [
   },
   {
     id: 'veena-gupta',
-    name: 'Dr. Veena Gupta',
+    name: 'Veena Gupta',
     specialty: 'Psychiatry',
     experience: '13 years experience',
     languages: 'English, Spanish, Tagalog',
@@ -106,7 +106,7 @@ export const doctors = [
   },
   {
     id: 'tony-chopper',
-    name: 'Dr. Tony Chopper',
+    name: 'Tony Chopper',
     specialty: 'General Medicine',
     experience: '7 years experience',
     languages: 'Japanese, English',
@@ -119,7 +119,7 @@ export const doctors = [
   },
   {
     id: 'dr-kureha',
-    name: 'Dr. Kureha',
+    name: 'Kureha',
     specialty: 'General Medicine',
     experience: '50+ years experience',
     languages: 'Japanese, English',
@@ -132,7 +132,7 @@ export const doctors = [
   },
   {
     id: 'dr-hiluluk',
-    name: 'Dr. Hiluluk',
+    name: 'Hiluluk',
     specialty: 'Pediatrics',
     experience: '20 years experience',
     languages: 'Japanese, English',
@@ -145,7 +145,7 @@ export const doctors = [
   },
   {
     id: 'dr-stein',
-    name: 'Dr. Franken Stein',
+    name: 'Franken Stein',
     specialty: 'Psychiatry',
     experience: '18 years experience',
     languages: 'Japanese, English',
@@ -158,7 +158,7 @@ export const doctors = [
   },
   {
     id: 'dr-senku',
-    name: 'Dr. Senku Ishigami',
+    name: 'Senku Ishigami',
     specialty: 'Neurology',
     experience: '10 years experience',
     languages: 'Japanese, English',
@@ -171,7 +171,7 @@ export const doctors = [
   },
   {
     id: 'dr-tsunade',
-    name: 'Dr. Tsunade Senju',
+    name: 'Tsunade Senju',
     specialty: 'Cardiology',
     experience: '30 years experience',
     languages: 'Japanese, English',

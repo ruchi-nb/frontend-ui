@@ -2,7 +2,8 @@
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Landing/Navbar";
 import Footer from "@/components/Landing/Footer";
-import { logout as apiLogout, clearTokens } from "@/data/api";
+import { clearTokens } from "@/data/api";
+import { logout as apiLogout } from "@/data/api-auth";
 
 const portalNavItems = [
   { type: "link", path: "/doctorportal", label: "Home" },

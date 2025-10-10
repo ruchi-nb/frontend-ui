@@ -21,7 +21,7 @@ export default function SecuritySettings() {
               </p>
             </div>
           </div>
-          <button className="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors font-medium">
+          <button className="bg-slate-600 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors font-medium">
             Configure
           </button>
         </div>
@@ -53,7 +53,7 @@ export default function SecuritySettings() {
               </p>
             </div>
           </div>
-          <button className="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors font-medium">
+          <button className="bg-slate-600 cursor-pointer text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors font-medium">
             Setup SSO
           </button>
         </div>

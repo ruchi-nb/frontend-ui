@@ -51,7 +51,7 @@ const HeroSection = () => {
               <GradientButton
                 id="btn-specialty"
                 onClick={handleFindSpecialty}
-                className="w-full sm:w-auto px-8 py-4 font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+                className="w-full cursor-pointer sm:w-auto px-8 py-4 font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
               >
                 <span>Find My Specialty</span>
                 <MoveDown className='w-8 h-8'/>
@@ -59,7 +59,7 @@ const HeroSection = () => {
               <OutlineButton
                 id="btn-doctor"
                 onClick={handleFindDoctor}
-                className="w-full sm:w-auto bg-white hover:bg-gray-50 px-8 py-4 font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+                className="w-full cursor-pointer sm:w-auto bg-white hover:bg-gray-50 px-8 py-4 font-semibold text-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
               >
                 <Search className='w-5 h-5'/>
                 <span>Find My Doctor</span>

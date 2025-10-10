@@ -8,7 +8,7 @@ import {
   Pause,
   Trash2,
 } from "lucide-react";
-import { listHospitalDoctors, removeDoctorFromHospital } from "@/data/api";
+import { listHospitalDoctors, removeDoctorFromHospital } from "@/data/api-hospital-admin.js";
 import { useUser } from "@/data/UserContext";
 
 const DoctorTable = ({ onView, onPause, onDelete }) => {

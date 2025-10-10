@@ -1,7 +1,7 @@
 // File: components/PatientPortal/Settings.jsx
 "use client";
 import { useEffect, useState } from "react";
-import { getPatientProfile, updatePatientProfile, uploadPatientAvatar } from "@/data/api";
+import { getPatientProfile, updatePatientProfile, uploadPatientAvatar } from "@/data/api-patient";
 import { useUser } from '@/data/UserContext';
 import { Save, MapPin, Mail, User, Image } from "lucide-react";
 import InvertedGradientButton from "../common/InvertedGradientButton";
@@ -26,25 +26,66 @@ export default function ProfileForm() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarUploading, setAvatarUploading] = useState(false);
 
+  // Helper function to parse address
+  const parseAddressString = (addr) => {
+    if (!addr || typeof addr !== "string") {
+      return { street: "", city: "", state: "", zip: "" };
+    }
+    const parts = addr.split(",").map((p) => p.trim()).filter(Boolean);
+    const street = parts[0] || "";
+    const city = parts[1] || "";
+    const stateZip = parts.slice(2).join(" ") || "";
+    let state = "";
+    let zip = "";
+    if (stateZip) {
+      const m = stateZip.match(/^(.*?)(\s+\d[\d-]*)?$/);
+      state = (m && m[1] ? m[1].trim() : stateZip).trim();
+      zip = (m && m[2] ? m[2].trim() : "");
+    }
+    return { street, city, state, zip };
+  };
+
+  // Helper function to normalize phone number
+  const normalizePhoneNumber = (phone) => {
+    if (!phone) return "";
+    
+    // Remove all non-digit characters
+    const digits = phone.replace(/\D/g, "");
+    
+    // If phone already starts with +91, return as is
+    if (phone.startsWith("+91")) {
+      return phone;
+    }
+    
+    // If phone starts with 91 (without +), add the +
+    if (digits.startsWith("91") && digits.length === 12) {
+      return "+" + digits;
+    }
+    
+    // If it's a 10-digit number (most common Indian format)
+    if (digits.length === 10) {
+      return "+91" + digits;
+    }
+    
+    // If it starts with 0 followed by 10 digits (like 09876543210)
+    if (digits.startsWith("0") && digits.length === 11) {
+      return "+91" + digits.slice(1);
+    }
+    
+    // For any other format, return the original but ensure +91 prefix for Indian numbers
+    // This handles cases where user might have entered with country code differently
+    if (digits.length >= 10) {
+      const last10Digits = digits.slice(-10);
+      return "+91" + last10Digits;
+    }
+    
+    // If we can't normalize properly, return original
+    return phone;
+  };
+
   useEffect(() => {
     let mounted = true;
-    const parseAddressString = (addr) => {
-      if (!addr || typeof addr !== "string") {
-        return { street: "", city: "", state: "", zip: "" };
-      }
-      const parts = addr.split(",").map((p) => p.trim()).filter(Boolean);
-      const street = parts[0] || "";
-      const city = parts[1] || "";
-      const stateZip = parts.slice(2).join(" ") || "";
-      let state = "";
-      let zip = "";
-      if (stateZip) {
-        const m = stateZip.match(/^(.*?)(\s+\d[\d-]*)?$/);
-        state = (m && m[1] ? m[1].trim() : stateZip).trim();
-        zip = (m && m[2] ? m[2].trim() : "");
-      }
-      return { street, city, state, zip };
-    };
+    
     (async () => {
       try {
         const data = await getPatientProfile();
@@ -83,22 +124,15 @@ export default function ProfileForm() {
     setSaving(true);
     setError("");
     try {
-      // Normalize phone to align with backend validator (Indian numbers)
-      const digits = (formData.phone || "").replace(/\D/g, "");
-      let normalizedPhone = formData.phone;
-      let d = digits;
-      if (d.startsWith("0")) d = d.slice(1);
-      if (d.length === 10) {
-        normalizedPhone = "+91" + d;
-      } else if (d.length === 12 && d.startsWith("91")) {
-        normalizedPhone = "+" + d;
-      }
+      // Normalize phone number to ensure +91 prefix
+      const normalizedPhone = normalizePhoneNumber(formData.phone);
 
       const addressString = [
         formData.street,
         formData.city,
         [formData.state, formData.zip].filter(Boolean).join(" ")
       ].filter(Boolean).join(", ");
+      
       const updatedProfile = await updatePatientProfile({
         first_name: formData.firstName,
         last_name: formData.lastName,
@@ -107,8 +141,10 @@ export default function ProfileForm() {
         phone: normalizedPhone,
         address: addressString,
       });
+      
       // Update the global user context with new data
       updateUser(updatedProfile);
+      
       // Keep local form synced with response - re-parse address from updated profile
       const addr = parseAddressString(updatedProfile.address);
       setFormData({
@@ -124,7 +160,6 @@ export default function ProfileForm() {
         zip: addr.zip,
       });
       setAvatarUrl(updatedProfile.avatar_url || avatarUrl);
-      alert("Profile saved successfully!");
     } catch (e) {
       setError(e?.message || "Failed to save profile");
     } finally {
@@ -221,7 +256,7 @@ export default function ProfileForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#f59e0b] to-[#fbbf24] mb-2 flex items-center space-x-2">
+              <label className="text-sm font-medium bg-clip-text text-transparent bg-gradient-to-r from-[#f59e0b] to-[#fbbf24] mb-2 flex items-center space-x-2">
                 <Mail className="w-6 h-6 text-[#f59e0b]"/>
                 <span>Email Address</span>
               </label>
@@ -259,7 +294,7 @@ export default function ProfileForm() {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full text-black border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full cursor-pointer text-black border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select Gender</option>
                   <option value="male">Male</option>
@@ -281,6 +316,9 @@ export default function ProfileForm() {
                   placeholder="Enter your phone number"
                   className="w-full text-black border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Format: +91XXXXXXXXXX or 10-digit number
+                </p>
               </div>
             </div>
 
@@ -355,6 +393,7 @@ export default function ProfileForm() {
               <InvertedGradientButton
                 type="submit"
                 color="amber"
+                className=" cursor-pointer"
               >
                 <Save className="w-6 h-6"/>
                 <span>Save Changes</span>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { listHospitalDoctors } from '@/data/api';
+import { listHospitalDoctors } from '@/data/api-hospital-admin.js';
 import { useUser } from '@/data/UserContext';
 
 const Dashboard = () => {
@@ -154,7 +154,7 @@ const Dashboard = () => {
               <h3 className="text-lg font-semibold text-slate-900">Weekly Usage Overview</h3>
               <p className="text-sm text-slate-600">Consultations and active doctors this week</p>
             </div>
-            <div className="flex items-center space-x-2 text-teal-600">
+            <div className="flex items-center space-x-2 text-[#004dd6]">
               {renderIcon('trending-up', 'h-4 w-4')}
               <span className="text-sm font-medium">+12% vs last week</span>
             </div>
@@ -171,7 +171,7 @@ const Dashboard = () => {
                   </div>
                   <div className="w-full bg-stone-200 rounded-full h-2">
                     <div 
-                      className="bg-teal-500 h-2 rounded-full transition-all duration-300" 
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
                       style={{ width: dayData.percentage }}
                     ></div>
                   </div>

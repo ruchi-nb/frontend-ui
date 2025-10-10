@@ -1,9 +1,10 @@
-// file: frontend/src/components/Landing/LoginPopUp.js
 "use client";
 
 import { useState, useEffect } from "react";
 import RegisterModal from "@/components/Landing/RegisterModal";
-import { login, getProfile, loginWithGoogle, getStoredTokens } from "@/data/api";
+import { login, loginWithGoogle } from "@/data/api-auth";
+import { getProfile } from "@/data/api-user";
+import { getStoredTokens } from "@/data/api";
 import { GoogleLogin } from "@react-oauth/google";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, AlertCircle, X } from "lucide-react";
@@ -23,6 +24,16 @@ export default function LoginPopup({ open, onClose, onLogin, onRegisterClick }) 
   // State management for modals
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  // ✅ FIX: Define handleClose early to avoid reference errors
+  const handleClose = () => {
+    if (!loading) {
+      setFormData({ email: "", password: "" });
+      setError("");
+      setValidationErrors({});
+      onClose();
+    }
+  };
 
   // Open Register Modal (from anywhere)
   const openRegisterModal = () => {
@@ -55,8 +66,7 @@ export default function LoginPopup({ open, onClose, onLogin, onRegisterClick }) 
   // Close modal when clicking overlay (for both modals)
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
-      closeRegisterModal();
-      closeLoginModal();
+      handleClose(); // ✅ FIX: Use handleClose instead of closeRegisterModal/closeLoginModal
     }
   };
 
@@ -64,8 +74,7 @@ export default function LoginPopup({ open, onClose, onLogin, onRegisterClick }) 
   useEffect(() => {
     const handleEscapeKey = (e) => {
       if (e.key === 'Escape') {
-        closeRegisterModal();
-        closeLoginModal();
+        handleClose(); // ✅ FIX: Use handleClose instead of closeRegisterModal/closeLoginModal
       }
     };
 
@@ -73,6 +82,7 @@ export default function LoginPopup({ open, onClose, onLogin, onRegisterClick }) 
     return () => document.removeEventListener('keydown', handleEscapeKey);
   }, []);
 
+  // Rest of your functions remain the same...
   const validateForm = () => {
     const errors = {};
 
@@ -109,100 +119,164 @@ export default function LoginPopup({ open, onClose, onLogin, onRegisterClick }) 
     if (error) setError("");
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  if (!validateForm()) {
-    setError("Please fix the validation errors below");
-    return;
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      setError("Please fix the validation errors below");
+      return;
+    }
 
-  setLoading(true);
-  setError("");
+    setLoading(true);
+    setError("");
 
-  try {
-    console.log("Attempting login for:", formData.email);
-    await login({ email: formData.email, password: formData.password });
-    
-    // Double-check tokens are stored
-    const tokens = getStoredTokens();
-    console.log("🔍 Tokens after login:", {
-      hasAccessToken: !!tokens.accessToken,
-      hasRefreshToken: !!tokens.refreshToken
-    });
-    
-    // Get role-aware profile
-    const profile = await getProfile();
-    console.log("Login successful, profile:", profile);
-    
-    onLogin && onLogin(profile);
-    
-    // Route based on user role
-    const role = profile._detectedRole || profile.global_role?.role_name || 'patient';
-    console.log("Final determined role for routing:", role);
-    
-    // Use window.location as fallback to ensure navigation
-    const portalPath = role === 'hospital_admin' ? '/Hospital' : `/${role}portal`;
-    console.log("Redirecting to:", portalPath);
-    
-    // Try router first, then fallback to window.location
-    router.push(portalPath);
-    
-    // Fallback in case router doesn't work
-    setTimeout(() => {
-      if (window.location.pathname !== portalPath) {
-        console.log("Router didn't navigate, using window.location");
-        window.location.href = portalPath;
+    try {
+      console.log("🔄 [DEBUG] Starting login process for:", formData.email);
+      
+      // Step 1: Call login API
+      console.log("🔄 [DEBUG] Step 1: Calling login API...");
+      const loginResponse = await login({ email: formData.email, password: formData.password });
+      console.log("✅ [DEBUG] Login API response:", loginResponse);
+      
+      // Step 2: Check tokens immediately after login
+      console.log("🔄 [DEBUG] Step 2: Checking stored tokens...");
+      const tokens = getStoredTokens();
+      console.log("🔍 [DEBUG] Tokens after login:", {
+        hasAccessToken: !!tokens.accessToken,
+        hasRefreshToken: !!tokens.refreshToken,
+        accessTokenLength: tokens.accessToken?.length,
+        refreshTokenLength: tokens.refreshToken?.length,
+        accessTokenPreview: tokens.accessToken ? tokens.accessToken.substring(0, 20) + '...' : 'none',
+        refreshTokenPreview: tokens.refreshToken ? tokens.refreshToken.substring(0, 20) + '...' : 'none'
+      });
+
+      // Step 3: Check localStorage directly for extra verification
+      if (typeof window !== "undefined") {
+        console.log("🔍 [DEBUG] Direct localStorage check:");
+        console.log("  - access_token:", localStorage.getItem("access_token")?.substring(0, 20) + '...' || 'not found');
+        console.log("  - refresh_token:", localStorage.getItem("refresh_token")?.substring(0, 20) + '...' || 'not found');
+        console.log("  - isLoggedIn:", localStorage.getItem("isLoggedIn") || 'not found');
       }
-    }, 1000);
-    
-    onClose();
-  } catch (error) {
-    console.error("Login failed:", error);
-    setError(error.message || "Login failed. Please check your credentials and try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+
+      // Step 4: Get user profile
+      console.log("🔄 [DEBUG] Step 3: Fetching user profile...");
+      const profile = await getProfile();
+      console.log("✅ [DEBUG] Profile fetched successfully:", {
+        user_id: profile.user_id,
+        email: profile.email,
+        _detectedRole: profile._detectedRole,
+        global_role: profile.global_role,
+        role_name: profile.role_name,
+        role: profile.role
+      });
+
+      // Step 5: Call onLogin callback
+      console.log("🔄 [DEBUG] Step 4: Calling onLogin callback...");
+      onLogin && onLogin(profile);
+      
+      // Step 6: Determine role and redirect
+      console.log("🔄 [DEBUG] Step 5: Determining user role...");
+      const role = profile._detectedRole || profile.global_role?.role_name || 'patient';
+      console.log("🎯 [DEBUG] Final determined role:", role);
+      
+      let portalPath;
+      switch (role) {
+        case 'superadmin':
+          portalPath = '/admin';
+          break;
+        case 'hospital_admin':
+          portalPath = '/Hospital';
+          break;
+        case 'doctor':
+          portalPath = '/doctorportal';
+          break;
+        case 'patient':
+        default:
+          portalPath = '/patientportal';
+          break;
+      }
+      
+      console.log("🔄 [DEBUG] Step 6: Redirecting to:", portalPath);
+      console.log("🔍 [DEBUG] Current path before redirect:", window.location.pathname);
+      
+      // Try router first
+      router.push(portalPath);
+      
+      // Fallback in case router doesn't work
+      setTimeout(() => {
+        if (window.location.pathname !== portalPath) {
+          console.log("⚠️ [DEBUG] Router didn't navigate, using window.location fallback");
+          window.location.href = portalPath;
+        } else {
+          console.log("✅ [DEBUG] Router navigation successful!");
+        }
+      }, 1000);
+      
+      console.log("🔄 [DEBUG] Step 7: Closing login modal...");
+      handleClose(); // ✅ FIX: Use handleClose instead of onClose
+      
+    } catch (error) {
+      console.error("❌ [DEBUG] Login process failed:", error);
+      console.error("❌ [DEBUG] Error details:", {
+        message: error.message,
+        status: error.status,
+        data: error.data
+      });
+      setError(error.message || "Login failed. Please check your credentials and try again.");
+    } finally {
+      console.log("🔄 [DEBUG] Login process completed, setting loading to false");
+      setLoading(false);
+    }
+  };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
     setError("");
 
     try {
-      console.log("Google login credential received");
+      console.log("🔄 [DEBUG] Starting Google login process...");
+      console.log("🔍 [DEBUG] Google credential received:", !!credentialResponse.credential);
+      
       await loginWithGoogle(credentialResponse.credential);
       
-      // Get role-aware profile after Google login
+      // Check tokens after Google login
+      const tokens = getStoredTokens();
+      console.log("🔍 [DEBUG] Tokens after Google login:", {
+        hasAccessToken: !!tokens.accessToken,
+        hasRefreshToken: !!tokens.refreshToken
+      });
+      
       const profile = await getProfile();
-      console.log("Google login successful, profile:", profile);
+      console.log("✅ [DEBUG] Google login successful, profile:", profile);
       
       onLogin && onLogin(profile);
       
-      // Route based on user role
       const role = profile._detectedRole || profile.global_role?.role_name || 'patient';
-      console.log("User role:", role);
-      console.log("Profile global_role:", profile.global_role);
+      console.log("🎯 [DEBUG] Google login - User role:", role);
       
+      let portalPath;
       switch (role) {
         case 'superadmin':
-          router.push('/admin');
+          portalPath = '/admin';
           break;
         case 'hospital_admin':
-          router.push('/Hospital');
+          portalPath = '/Hospital';
           break;
         case 'doctor':
-          router.push('/doctorportal');
+          portalPath = '/doctorportal';
           break;
         case 'patient':
         default:
-          router.push('/patientportal');
+          portalPath = '/patientportal';
           break;
       }
       
-      onClose();
+      console.log("🔄 [DEBUG] Google login redirecting to:", portalPath);
+      router.push(portalPath);
+      
+      handleClose(); // ✅ FIX: Use handleClose instead of onClose
     } catch (error) {
-      console.error("Google login failed:", error);
+      console.error("❌ [DEBUG] Google login failed:", error);
       setError(error.message || "Google login failed. Please try again.");
     } finally {
       setLoading(false);
@@ -214,14 +288,7 @@ const handleSubmit = async (e) => {
     setError("Google login failed. Please try again.");
   };
 
-  const handleClose = () => {
-    if (!loading) {
-      setFormData({ email: "", password: "" });
-      setError("");
-      setValidationErrors({});
-      onClose();
-    }
-  };
+  // Remove the duplicate handleClose function that was here
 
   const handleRegisterClick = () => {
     handleClose();
@@ -236,20 +303,26 @@ const handleSubmit = async (e) => {
     setIsRegisterOpen(false);
     onLogin && onLogin(profile);
     
-    // Route based on user role
-    const role = profile._detectedRole || profile.global_role?.role_name;
+    const role = profile._detectedRole || profile.global_role?.role_name || 'patient';
+    let portalPath;
     switch (role) {
+      case 'superadmin':
+        portalPath = '/admin';
+        break;
       case 'hospital_admin':
-        router.push('/Hospital');
+        portalPath = '/Hospital';
         break;
       case 'doctor':
-        router.push('/doctorportal');
+        portalPath = '/doctorportal';
         break;
       case 'patient':
       default:
-        router.push('/patientportal');
+        portalPath = '/patientportal';
         break;
     }
+    
+    console.log("Register success, redirecting to:", portalPath);
+    router.push(portalPath);
   };
 
   // Don't render anything if not open
@@ -279,6 +352,7 @@ const handleSubmit = async (e) => {
               <X className="w-5 h-5" />
             </button>
 
+            {/* Rest of your JSX remains the same */}
             <h2 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-[#004dd6] to-[#3d85c6] mb-4">
               Welcome Back
             </h2>

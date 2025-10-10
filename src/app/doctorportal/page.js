@@ -6,7 +6,7 @@ import { patients } from "@/data/patients";
 import TranscriptModal from "@/components/DoctorPortal/home/TranscriptModal";
 import PatientCard from "@/components/DoctorPortal/home/PatientCard";
 import { User, FileText, Layers } from "lucide-react";
-import { getDoctorProfile, listDoctorPatients } from "@/data/api";
+import { getDoctorProfile, listDoctorPatients } from "@/data/api-doctor";
 
 export default function DoctorPortalPage() {
   const [selectedPatient, setSelectedPatient] = useState(null);
