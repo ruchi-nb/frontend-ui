@@ -37,7 +37,7 @@ const HospitalList = () => {
         <div className="section-header mb-4">
           <h2 className="text-xl font-semibold text-slate-900">Hospital List</h2>
         </div>
-        <div className="animate-pulse">
+        <div className="opacity-50">
           <div className="h-10 bg-gray-200 rounded mb-4"></div>
           {[...Array(5)].map((_, i) => (
             <div key={i} className="h-16 bg-gray-200 rounded mb-2"></div>

@@ -67,7 +67,7 @@ const DoctorSpecialties = ({ isEditing }) => {
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <div className="animate-pulse">
+        <div className="opacity-50">
           <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (

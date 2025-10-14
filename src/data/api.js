@@ -299,3 +299,18 @@ function getAllPossibleTokens() {
     return { accessToken: "", refreshToken: "" };
   }
 }
+
+export function getHospitalId() {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("hospital_id");
+}
+
+export function setHospitalId(hospitalId) {
+  if (typeof window === "undefined") return;
+  localStorage.setItem("hospital_id", hospitalId);
+}
+
+export function clearHospitalId() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("hospital_id");
+}

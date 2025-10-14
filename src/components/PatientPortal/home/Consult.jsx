@@ -597,7 +597,7 @@ const initializeCall = async () => {
         
         {callStatus === 'connected' && (
           <div className="bg-green-900 text-green-300 py-1 px-3 rounded-full text-sm font-medium flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
             <span>{formatTime(callDuration)}</span>
           </div>
         )}
@@ -706,7 +706,7 @@ const initializeCall = async () => {
             {interimTranscript && (
               <div className="mt-4 p-3 bg-blue-900 bg-opacity-50 rounded-lg border border-blue-700">
                 <div className="text-blue-300 text-sm font-medium mb-1 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                   Live Transcript:
                 </div>
                 <div className="text-white text-sm">{interimTranscript}</div>

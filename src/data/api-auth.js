@@ -9,26 +9,44 @@ import { request } from './api.js';
  */
 export async function login({ email, password }) {
   console.log("🔐 Attempting login for:", email);
-  
+
   const response = await request("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password })
   }, { withAuth: false });
-  
+
   console.log("✅ Login successful, response:", response);
-  
-  // Store tokens and set login flag
+
+  // Store tokens and isLoggedIn flag
   if (response.access_token && response.refresh_token) {
     if (typeof window !== "undefined") {
       localStorage.setItem("access_token", response.access_token);
       localStorage.setItem("refresh_token", response.refresh_token);
-      localStorage.setItem("isLoggedIn", "true"); // Add this line
+      localStorage.setItem("isLoggedIn", "true");
       console.log("💾 Tokens stored in localStorage");
+
+      // Parse JWT to get hospital_id if exists
+      try {
+        const payload = JSON.parse(atob(response.access_token.split('.')[1]));
+        // JWT structure: { user: { hospital_roles: [...] }, ... }
+        const userData = payload.user || payload;
+        const hospitalId = userData.hospital_roles?.[0]?.hospital_id || null;
+        if (hospitalId) {
+          localStorage.setItem("hospital_id", hospitalId);
+          console.log("🏥 Hospital ID stored:", hospitalId);
+        } else {
+          console.log("⚠️ No hospital ID found in JWT");
+          console.log("JWT payload structure:", payload);
+        }
+      } catch (e) {
+        console.warn("❌ Failed to parse JWT for hospital ID:", e);
+      }
     }
   }
-  
+
   return response;
 }
+
 
 /**
  * Logout user
@@ -41,7 +59,7 @@ export async function logout() {
       method: "POST"
     });
     
-    // Clear tokens regardless of API response
+    // Clear tokens and hospital_id regardless of API response
     if (typeof window !== "undefined") {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
@@ -51,13 +69,15 @@ export async function logout() {
       localStorage.removeItem("admin_refresh_token");
       localStorage.removeItem("superadmin_access_token");
       localStorage.removeItem("superadmin_refresh_token");
-      console.log("🧹 All tokens cleared from localStorage");
+      localStorage.removeItem("hospital_id"); // <-- clear hospital ID
+      localStorage.removeItem("isLoggedIn");
+      console.log("🧹 All tokens and hospital ID cleared from localStorage");
     }
     
     return response;
   } catch (error) {
     console.error("❌ Logout error:", error);
-    // Still clear tokens even if API call fails
+    // Still clear tokens and hospital_id even if API call fails
     if (typeof window !== "undefined") {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
@@ -67,7 +87,9 @@ export async function logout() {
       localStorage.removeItem("admin_refresh_token");
       localStorage.removeItem("superadmin_access_token");
       localStorage.removeItem("superadmin_refresh_token");
-      console.log("🧹 Tokens cleared despite API error");
+      localStorage.removeItem("hospital_id"); // <-- clear hospital ID
+      localStorage.removeItem("isLoggedIn");
+      console.log("🧹 Tokens and hospital ID cleared despite API error");
     }
     throw error;
   }

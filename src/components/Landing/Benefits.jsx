@@ -200,7 +200,7 @@ export default function WhyChoose() {
                         ? 'bg-white/20 text-white backdrop-blur-sm' 
                         : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800'
                     }`}>
-                      <div className={`w-2 h-2 rounded-full animate-pulse ${
+                      <div className={`w-2 h-2 rounded-full ${
                         hoveredCard === idx ? 'bg-white' : 'bg-gradient-to-r from-blue-600 to-blue-800'
                       }`}></div>
                       <span className={`text-xs sm:text-sm font-semibold transition-colors ${

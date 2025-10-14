@@ -71,7 +71,7 @@ const DoctorTable = ({ onView, onPause, onDelete }) => {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="p-8 text-center">
-          <div className="animate-pulse">
+          <div className="opacity-50">
             <div className="h-4 bg-gray-200 rounded w-1/4 mx-auto mb-4"></div>
             <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
           </div>
