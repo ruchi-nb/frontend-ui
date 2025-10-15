@@ -21,23 +21,16 @@ const AdminSidebar = () => {
     {
       id: "AddHospital",
       label: "Add Hospital",
-      path: "/Hospital/addDoctor",
+      path: "/admin/AddHospital",
       icon: <UserPlus className="mr-3 h-5 w-5" />,
       sec: "ADD NEW",
     },
     {
       id: "AddRoles",
-      label: "Add Roles",
-      path: "/Hospital/addRole",
+      label: "Add Users",
+      path: "/admin/addDoctor",
       icon: <UserPlus className="mr-3 h-5 w-5" />,
       sec: "ADD NEW",
-    },
-    {
-      id: "MyRoles",
-      label: "My Roles",
-      path: "/Hospital/roles", // Fixed: This should probably point to a roles page
-      icon: <Users className="mr-3 h-5 w-5" />,
-      sec: "VIEW",
     },
     {
       id: "HospitalManagement",

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import UserManagement from "@/components/common/UserManagement";
 import HosSidebar from "@/components/Hospital/Sidebar";
 import HospitalProtectedRoute from "@/components/Hospital/HospitalProtectedRoute";
-import { ScaleIn, FadeIn } from "@/components/common/animations";
 import { useUser } from "@/data/UserContext";
 
 // Dynamic API functions for custom roles
@@ -18,7 +17,7 @@ const getHospitalCustomRoles = async (hospitalId) => {
     const response = await getHospitalRoles(hospitalId);
     return response || [];
   } catch (error) {
-    console.error("Failed to fetch custom roles:", error);
+    console.log("⚠️ Custom roles endpoint not available:", error.message);
     return [];
   }
 };
@@ -160,18 +159,12 @@ export default function CustomRoleManagementPage() {
       <HospitalProtectedRoute>
         <div className="flex h-screen bg-[#E6EEF8]">
           <div className="h-full w-[17rem] flex-shrink-0">
-            <FadeIn direction="left" duration={0.8} delay={0.2} speed={1}>
-              <ScaleIn direction="left" duration={0.8} delay={0.4} speed={1}>
                 <HosSidebar />
-              </ScaleIn>
-            </FadeIn>
           </div>
           <div className="flex-1 flex flex-col overflow-hidden">
             <main className="flex-1 overflow-x-hidden overflow-y-auto">
               <div className="p-6 max-w-7xl mx-auto">
                 {/* Header */}
-                <FadeIn direction="up" duration={0.8} delay={0.2} speed={1}>
-                  <ScaleIn direction="up" duration={0.8} delay={0.4} speed={1}>
                     <div className="flex items-center justify-between mb-8">
                       <div>
                         <h1 className="text-3xl font-bold text-gray-900">Custom Role Management</h1>
@@ -186,12 +179,8 @@ export default function CustomRoleManagementPage() {
                         <span>Create Custom Role</span>
                       </button>
                     </div>
-                  </ScaleIn>
-                </FadeIn>
 
                 {/* Empty State */}
-                <FadeIn direction="up" duration={0.8} delay={0.4} speed={1}>
-                  <ScaleIn direction="up" duration={0.8} delay={0.6} speed={1}>
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                       <div className="p-12 text-center">
                         <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -222,8 +211,6 @@ export default function CustomRoleManagementPage() {
                         </div>
                       </div>
                     </div>
-                  </ScaleIn>
-                </FadeIn>
               </div>
             </main>
           </div>
@@ -236,11 +223,7 @@ export default function CustomRoleManagementPage() {
     <HospitalProtectedRoute>
       <div className="flex h-screen bg-[#E6EEF8]">
         <div className="h-full w-[17rem] flex-shrink-0">
-          <FadeIn direction="left" duration={0.8} delay={0.2} speed={1}>
-            <SlideIn direction="left" duration={0.8} delay={0.4} speed={1}>
               <HosSidebar />
-            </ScaleIn>
-          </FadeIn>
         </div>
         <div className="flex-1 flex flex-col overflow-hidden">
           <main className="flex-1 overflow-x-hidden overflow-y-auto">

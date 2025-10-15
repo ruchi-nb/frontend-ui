@@ -29,7 +29,7 @@ const HospitalSidebar = () => {
     {
       id: "AddRoles",
       label: "Add Roles",
-      path: "/Hospital/addRole",
+      path: "/Hospital/createRole",
       icon: <UserPlus className="mr-3 h-5 w-5" />,
       sec: "ADD NEW",
     },

@@ -1,19 +1,17 @@
 import AdminLayout from "../layout";
 import Sidebar from "@/components/Admin/Sidebar";
-import HosNavbar from "@/components/Admin/Navbar";
 import HospitalCards from "@/components/Admin/Management/HospitalCards";
 import AddHospitalModal from "@/components/Admin/Management/ManageHeader"; 
 
 export default function managePage(){
     return(
         <AdminLayout>
-            <div className="flex h-screen bg-stone-50">
-                <div className="h-full w-64 bg-slate-900 shadow-xl flex-shrink-0">
+            <div className="flex h-screen bg-[#fafaf9]">
+                <div className="h-full w-64 shadow-xl flex-shrink-0">
                     <Sidebar />
                 </div>
                 <div className="flex-1 flex flex-col overflow-hidden">
-                    <HosNavbar />
-                    <main className="flex-1 overflow-x-hidden overflow-y-auto bg-stone-50">
+                    <main className="flex-1 overflow-x-hidden overflow-y-auto ">
                         <div className="p-6 max-w-7xl mx-auto">
                             <AddHospitalModal />
                             <HospitalCards />

@@ -96,21 +96,63 @@ export function UserProvider({ children }) {
           refreshTokenLength: tokens.refreshToken?.length
         });
         
-        // Strategy 1: Try refresh if we have a refresh token
-        if (tokens.refreshToken) {
-          console.log("🔄 Attempting token refresh...");
+        // Strategy 1: Try refresh if we have a refresh token AND access token is expired
+        if (tokens.refreshToken && tokens.accessToken) {
+          // Check if access token is expired before trying refresh
+          try {
+            const payload = JSON.parse(atob(tokens.accessToken.split('.')[1]));
+            const exp = payload.exp;
+            const now = Math.floor(Date.now() / 1000);
+            const isExpired = exp < now;
+            
+            console.log("🔄 Access token expiration check:", {
+              expiresAt: new Date(exp * 1000).toLocaleString(),
+              isExpired: isExpired,
+              timeUntilExpiry: exp - now
+            });
+            
+            if (isExpired) {
+              console.log("🔄 Access token expired, attempting refresh...");
+              const refreshed = await refreshTokens();
+              console.log("🔄 Token refresh result:", refreshed);
+              
+              if (refreshed) {
+                console.log("✅ Tokens refreshed successfully");
+                const profile = await getProfile();
+                setUser(profile);
+                console.log("✅ User profile loaded:", profile);
+                setLoading(false);
+                return;
+              } else {
+                console.log("❌ Token refresh failed");
+                clearAllTokens();
+              }
+            } else {
+              console.log("✅ Access token still valid, skipping refresh");
+            }
+          } catch (tokenError) {
+            console.log("❌ Error checking token expiration:", tokenError);
+            // If we can't parse the token, try refresh anyway
+            console.log("🔄 Attempting token refresh due to parse error...");
+            const refreshed = await refreshTokens();
+            if (refreshed) {
+              const profile = await getProfile();
+              setUser(profile);
+              setLoading(false);
+              return;
+            } else {
+              clearAllTokens();
+            }
+          }
+        } else if (tokens.refreshToken && !tokens.accessToken) {
+          console.log("🔄 Only refresh token available, attempting refresh...");
           const refreshed = await refreshTokens();
-          console.log("🔄 Token refresh result:", refreshed);
-          
           if (refreshed) {
-            console.log("✅ Tokens refreshed successfully");
             const profile = await getProfile();
             setUser(profile);
-            console.log("✅ User profile loaded:", profile);
             setLoading(false);
             return;
           } else {
-            console.log("❌ Token refresh failed");
             clearAllTokens();
           }
         } else {

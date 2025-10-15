@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/data/UserContext';
 import { useHospitalId } from '@/hooks/useHospitalId';
+import { LifeLine } from 'react-loading-indicators';
 
 const HospitalProtectedRoute = ({ children }) => {
   const { user, loading } = useUser();
@@ -26,8 +27,7 @@ const HospitalProtectedRoute = ({ children }) => {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#e6eef8]">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <LifeLine color="#3b82f6" size="large" text="Loading..." textColor="#6b7280" />
         </div>
       </div>
     );

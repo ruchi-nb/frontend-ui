@@ -1,12 +1,18 @@
 'use client';
-import React, { useMemo, useState, useContext } from "react";
-import { User, FileText, Save, Key, X } from "lucide-react";
-import { addDoctorToHospital } from '@/data/api-hospital-admin';
+import React, { useMemo, useState, useContext, useEffect } from "react";
+import { User, FileText, Save, Key, X, RefreshCw } from "lucide-react";
+import { createHospitalUser, getHospitalRoles } from '@/data/api-hospital-admin';
+import { createUserForHospital } from '@/data/api-superadmin';
+import { useUser } from '@/data/UserContext';
+import { LifeLine } from 'react-loading-indicators';
 
 // Mock context for hospital ID (you might have this in your app)
 const HospitalContext = React.createContext();
 
-const ROLES = ["patient", "doctor", "nurse", "lab technician"];
+const DEFAULT_ROLES = [
+  { name: "doctor", label: "Doctor", isDefault: true },
+  { name: "patient", label: "Patient", isDefault: true }
+];
 
 const SPECIALTIES = [
   { id: "cardiology", name: "Cardiology" },
@@ -40,10 +46,105 @@ function randFrom(chars, n) {
   return out;
 }
 
-const DoctorForm = ({ onSuccess, onCancel }) => {
-  // Get hospitalId from context (you might get this from auth context or props)
-  const hospitalContext = useContext(HospitalContext);
-  const hospitalId = hospitalContext?.hospitalId || "current-hospital-id"; // Replace with actual source
+const DoctorForm = ({ onSuccess, onCancel, context = 'hospital-admin', hospitalId: propHospitalId = null }) => {
+  const { user, getHospitalId } = useUser();
+  const hospitalId = propHospitalId || getHospitalId();
+  const hasHospitalAccess = !!hospitalId;
+  const isSuperAdminContext = context === 'superadmin';
+
+  console.log("🔍 DoctorForm Debug:", {
+    user: user ? { 
+      user_id: user.user_id, 
+      role: user._detectedRole || user.role_name,
+      hospital_id: user.hospital_id 
+    } : null,
+    hospitalId,
+    hasHospitalAccess
+  });
+
+  const [availableRoles, setAvailableRoles] = useState(DEFAULT_ROLES);
+  const [loadingRoles, setLoadingRoles] = useState(true);
+  const [rolesError, setRolesError] = useState("");
+
+  // Load custom roles dynamically
+  useEffect(() => {
+    async function loadRoles() {
+      try {
+        if (!hospitalId) {
+          setLoadingRoles(false);
+          return;
+        }
+
+        // For superadmin context, we might have different role loading logic
+        if (isSuperAdminContext) {
+          // Superadmin can create users with any role, including custom hospital roles
+          try {
+            const customRoles = await getHospitalRoles(hospitalId);
+            const customRoleObjects = customRoles.map(role => ({
+              name: role.role_name,
+              label: role.role_name.charAt(0).toUpperCase() + role.role_name.slice(1).replace('_', ' '),
+              isDefault: false,
+              hospital_role_id: role.hospital_role_id,
+              description: role.description
+            }));
+            
+            setAvailableRoles([...DEFAULT_ROLES, ...customRoleObjects]);
+            console.log("✅ Superadmin: Custom roles loaded:", customRoleObjects.length);
+          } catch (error) {
+            console.log("⚠️ Superadmin: Custom roles endpoint not available, using default roles only");
+            setAvailableRoles(DEFAULT_ROLES);
+            setRolesError("Custom roles not available - using default roles only");
+          }
+        } else {
+          // Hospital admin context - try to fetch custom roles
+          try {
+            const customRoles = await getHospitalRoles(hospitalId);
+            const customRoleObjects = customRoles.map(role => ({
+              name: role.role_name,
+              label: role.role_name.charAt(0).toUpperCase() + role.role_name.slice(1).replace('_', ' '),
+              isDefault: false,
+              hospital_role_id: role.hospital_role_id,
+              description: role.description
+            }));
+            
+            setAvailableRoles([...DEFAULT_ROLES, ...customRoleObjects]);
+            console.log("✅ Hospital admin: Custom roles loaded:", customRoleObjects.length);
+          } catch (error) {
+            console.log("⚠️ Hospital admin: Custom roles endpoint not available, using default roles only");
+            console.log("Error details:", error.message);
+            setAvailableRoles(DEFAULT_ROLES);
+            setRolesError("Custom roles not available - using default roles only");
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load roles:", error);
+        setRolesError("Failed to load roles. Using default roles only.");
+        setAvailableRoles(DEFAULT_ROLES);
+      } finally {
+        setLoadingRoles(false);
+      }
+    }
+
+    if (hospitalId) {
+      loadRoles();
+    }
+  }, [hospitalId, isSuperAdminContext]);
+
+  if (!hasHospitalAccess) {
+    return (
+      <div className="p-8 bg-red-50 border border-red-200 rounded-xl">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-red-800 mb-2">Access Denied</h3>
+          <p className="text-red-600">You don't have permission to access this hospital's data.</p>
+        </div>
+      </div>
+    );
+  }
 
   const [form, setForm] = useState({
     firstName: "",
@@ -60,6 +161,13 @@ const DoctorForm = ({ onSuccess, onCancel }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // Set default role when roles are loaded
+  useEffect(() => {
+    if (availableRoles.length > 0 && !form.role) {
+      setForm(prev => ({ ...prev, role: availableRoles[0].name }));
+    }
+  }, [availableRoles, form.role]);
 
   const username = useMemo(() => form.email.trim(), [form.email]);
 
@@ -80,7 +188,38 @@ const DoctorForm = ({ onSuccess, onCancel }) => {
     });
   };
 
-  const isClinician = form.role === "doctor" || form.role === "nurse" || form.role === "lab technician";
+  const isClinician = form.role === "doctor" || form.role === "nurse" || form.role === "lab technician" || 
+                     (form.role && !availableRoles.find(r => r.name === form.role)?.isDefault);
+
+  const refreshRoles = async () => {
+    setLoadingRoles(true);
+    setRolesError("");
+    try {
+      // Try to fetch custom roles, but don't fail if endpoint doesn't exist
+      try {
+        const customRoles = await getHospitalRoles(hospitalId);
+        const customRoleObjects = customRoles.map(role => ({
+          name: role.role_name,
+          label: role.role_name.charAt(0).toUpperCase() + role.role_name.slice(1).replace('_', ' '),
+          isDefault: false,
+          hospital_role_id: role.hospital_role_id,
+          description: role.description
+        }));
+        
+        setAvailableRoles([...DEFAULT_ROLES, ...customRoleObjects]);
+        console.log(`✅ ${isSuperAdminContext ? 'Superadmin' : 'Hospital admin'}: Roles refreshed successfully:`, customRoleObjects.length);
+      } catch (error) {
+        console.log(`⚠️ ${isSuperAdminContext ? 'Superadmin' : 'Hospital admin'}: Custom roles endpoint not available during refresh`);
+        setAvailableRoles(DEFAULT_ROLES);
+        setRolesError("Custom roles not available - using default roles only");
+      }
+    } catch (error) {
+      console.error("Failed to refresh roles:", error);
+      setRolesError("Failed to refresh roles. Please try again.");
+    } finally {
+      setLoadingRoles(false);
+    }
+  };
 
   const generatePassword = () => {
     if (form.genMode === "random") {
@@ -120,16 +259,14 @@ const DoctorForm = ({ onSuccess, onCancel }) => {
         last_name: form.lastName,
         email: form.email,
         phone: form.phone || undefined,
-        role: form.role,
+        role_name: form.role,
+        username: username,
+        password: form.password,
         // Include specialty and languages only for clinicians
         ...(isClinician && {
           specialty: form.specialty,
           languages: form.languages,
         }),
-        credentials: {
-          username: username,
-          password: form.password,
-        },
       };
 
       // Prepare specialty IDs array (convert specialty name to ID)
@@ -140,11 +277,21 @@ const DoctorForm = ({ onSuccess, onCancel }) => {
       console.log("Calling API with:", {
         hospitalId,
         payload,
-        specialtyIds
+        specialtyIds,
+        context: isSuperAdminContext ? 'superadmin' : 'hospital-admin'
       });
 
-      // Call the API
-      const result = await addDoctorToHospital(hospitalId, payload, specialtyIds);
+      // Call the appropriate API based on context
+      let result;
+      if (isSuperAdminContext) {
+        // Use superadmin API for user creation
+        result = await createUserForHospital(hospitalId, payload);
+        console.log("✅ Superadmin API called successfully");
+      } else {
+        // Use hospital admin API for user creation
+        result = await createHospitalUser(hospitalId, payload);
+        console.log("✅ Hospital admin API called successfully");
+      }
 
       // Handle success
       setSuccess(`User ${form.firstName} ${form.lastName} created successfully!`);
@@ -231,6 +378,11 @@ const DoctorForm = ({ onSuccess, onCancel }) => {
           <User className="h-5 w-5 text-blue-600" />
           <h2 className="text-xl font-semibold text-gray-900">
             Personal Information
+            {isSuperAdminContext && (
+              <span className="ml-2 text-sm font-normal text-purple-600 bg-purple-100 px-2 py-1 rounded">
+                Superadmin Mode
+              </span>
+            )}
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -292,32 +444,58 @@ const DoctorForm = ({ onSuccess, onCancel }) => {
 
           {/* Role selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Select Role *
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Select Role *
+              </label>
+              <button
+                type="button"
+                onClick={refreshRoles}
+                disabled={loadingRoles || loading}
+                className="flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 disabled:text-gray-400"
+              >
+                <RefreshCw className={`h-3 w-3 ${loadingRoles ? 'animate-spin' : ''}`} />
+                <span>Refresh Roles</span>
+              </button>
+            </div>
             <select
               required
               value={form.role}
               onChange={(e) => {
                 const newRole = e.target.value;
+                const selectedRole = availableRoles.find(r => r.name === newRole);
                 setForm((f) => ({
                   ...f,
                   role: newRole,
-                  // reset clinician-only fields if switching to patient
+                  // reset clinician-only fields if switching to patient or non-clinician role
                   specialty: newRole === "patient" ? "" : f.specialty,
                   languages: newRole === "patient" ? [] : f.languages,
                 }));
               }}
-              disabled={loading}
+              disabled={loading || loadingRoles}
               className="w-full px-4 py-2 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
             >
               <option value="">Select role</option>
-              {ROLES.map((r) => (
-                <option key={r} value={r}>
-                  {r.charAt(0).toUpperCase() + r.slice(1)}
+              {availableRoles.map((role) => (
+                <option key={role.name} value={role.name}>
+                  {role.label} {role.isDefault ? '(Default)' : '(Custom)'}
                 </option>
               ))}
             </select>
+            {rolesError && (
+              <p className="text-red-500 text-xs mt-1">{rolesError}</p>
+            )}
+            {form.role && (
+              <p className="text-gray-500 text-xs mt-1">
+                {availableRoles.find(r => r.name === form.role)?.description || 
+                 `${form.role.charAt(0).toUpperCase() + form.role.slice(1)} role`}
+              </p>
+            )}
+            {availableRoles.length === DEFAULT_ROLES.length && (
+              <p className="text-blue-500 text-xs mt-1">
+                💡 Only default roles available. Create custom roles to see more options.
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -454,7 +632,7 @@ const DoctorForm = ({ onSuccess, onCancel }) => {
         >
           {loading ? (
             <>
-              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <LifeLine color="#ffffff" size="small" />
               <span>Creating...</span>
             </>
           ) : (

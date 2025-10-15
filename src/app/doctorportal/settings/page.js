@@ -3,22 +3,19 @@
 import { useState } from "react";
 import Layout from "./Layout";
 import SettingsHeader from "@/components/DoctorPortal/settings/SettingHeader";
-import ProfileInformation from "@/components/DoctorPortal/settings/ProfileInformation";
-import AddressInformation from "@/components/DoctorPortal/settings/AddressInformation";
-import VoiceSamples from "@/components/DoctorPortal/settings/VoiceSamples";
-import GenderSection from "@/components/DoctorPortal/settings/GenderSection";
+import UnifiedDoctorSettings from "@/components/DoctorPortal/settings/UnifiedDoctorSettings";
 
 export default function SettingsPage() {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleSave = () => {
-    // Add your save logic here (API calls, etc.)
-    console.log("Saving changes...");
+    // The save logic is now handled within UnifiedDoctorSettings
+    console.log("Profile saved successfully");
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    // Add any cancel logic here (reset form fields, etc.)
+    // The cancel logic is now handled within UnifiedDoctorSettings
     console.log("Canceling edits...");
     setIsEditing(false);
   };
@@ -31,10 +28,9 @@ export default function SettingsPage() {
         onSave={handleSave}
         onCancel={handleCancel}
       />
-      <ProfileInformation isEditing={isEditing} />
-      <GenderSection isEditing={isEditing} />
-      <AddressInformation isEditing={isEditing} />
-      <VoiceSamples isEditing={isEditing} />
+      <UnifiedDoctorSettings 
+        isEditing={isEditing}
+      />
     </Layout>
   );
 }

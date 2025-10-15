@@ -15,6 +15,16 @@ export function getDoctorProfile() {
  * Update doctor profile
  */
 export function updateDoctorProfile(update) {
+  // Check if update is FormData (for file uploads)
+  if (update instanceof FormData) {
+    return request("/doctors/profile", { 
+      method: "PUT", 
+      body: update,
+      headers: {} // Don't set Content-Type for FormData, let browser set it with boundary
+    });
+  }
+  
+  // Regular JSON update
   return request("/doctors/profile", { method: "PUT", body: JSON.stringify(update || {}) });
 }
 

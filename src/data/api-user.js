@@ -78,14 +78,16 @@ export async function getProfile() {
           
         case 'hospital_admin':
           try {
-            if (userData.hospital_roles?.[0]?.hospital_id) {
-              const hospitalId = userData.hospital_roles[0].hospital_id;
-              const profile = await getHospitalProfile(hospitalId);
-              return { ...profile, _detectedRole: 'hospital_admin' };
-            }
-            throw new Error("No hospital ID found in JWT");
+            // For hospital admin, we need to get the user profile, not hospital profile
+            // The JWT already contains the user information we need
+            console.log("Hospital admin detected, using JWT data");
+            return { 
+              ...userData, 
+              _detectedRole: 'hospital_admin',
+              hospital_id: userData.hospital_roles?.[0]?.hospital_id || userData.hospital_id
+            };
           } catch (error) {
-            console.log("Hospital profile failed, using JWT data");
+            console.log("Hospital admin profile failed, using JWT data");
             return { ...userData, _detectedRole: 'hospital_admin' };
           }
           break;
@@ -124,20 +126,19 @@ export async function getProfile() {
       } catch (doctorError) {
         console.log("Doctor profile failed:", doctorError.status || doctorError.message);
         
-        // Try hospital admin
+        // Try hospital admin - use JWT data directly
         try {
           console.log("Trying hospital admin profile...");
-          if (userData.hospital_roles?.[0]?.hospital_id) {
-            const hospitalId = userData.hospital_roles[0].hospital_id;
-            const hospitalProfile = await getHospitalProfile(hospitalId);
-            console.log("Successfully got hospital profile");
+          if (userData.hospital_roles?.[0]?.hospital_id || userData.hospital_id) {
+            console.log("Hospital admin detected in fallback, using JWT data");
             return {
-              ...hospitalProfile,
-              _detectedRole: 'hospital_admin'
+              ...userData,
+              _detectedRole: 'hospital_admin',
+              hospital_id: userData.hospital_roles?.[0]?.hospital_id || userData.hospital_id
             };
           }
         } catch (hospitalError) {
-          console.log("Hospital profile failed:", hospitalError.message);
+          console.log("Hospital admin fallback failed:", hospitalError.message);
         }
       }
     }

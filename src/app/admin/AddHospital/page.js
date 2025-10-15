@@ -4,7 +4,7 @@ import AddHospitalPage from "@/components/Admin/Management/AddHospitalPage";
 
 export default function Page2() {
     return (
-        <div className="flex h-screen bg-[#E6EEF8]">
+        <div className="flex h-screen bg-[#fafaf9]">
         <div className="h-full w-64 flex-shrink-0">
             <AdminSidebar />
         </div>

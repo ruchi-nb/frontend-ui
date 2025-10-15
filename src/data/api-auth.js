@@ -49,6 +49,47 @@ export async function login({ email, password }) {
 
 
 /**
+ * Login with Google OAuth
+ */
+export async function loginWithGoogle(credential) {
+  console.log("🔐 Attempting Google login with credential:", credential);
+
+  const response = await request("/auth/google", {
+    method: "POST",
+    body: JSON.stringify({ credential })
+  }, { withAuth: false });
+
+  console.log("✅ Google login successful, response:", response);
+
+  // Store tokens and isLoggedIn flag
+  if (response.access_token && response.refresh_token) {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("access_token", response.access_token);
+      localStorage.setItem("refresh_token", response.refresh_token);
+      localStorage.setItem("isLoggedIn", "true");
+      console.log("💾 Tokens stored in localStorage");
+
+      // Parse JWT to get hospital_id if exists
+      try {
+        const payload = JSON.parse(atob(response.access_token.split('.')[1]));
+        const userData = payload.user || payload;
+        const hospitalId = userData.hospital_roles?.[0]?.hospital_id || null;
+        if (hospitalId) {
+          localStorage.setItem("hospital_id", hospitalId);
+          console.log("🏥 Hospital ID stored:", hospitalId);
+        } else {
+          console.log("⚠️ No hospital ID found in JWT");
+        }
+      } catch (e) {
+        console.warn("❌ Failed to parse JWT for hospital ID:", e);
+      }
+    }
+  }
+
+  return response;
+}
+
+/**
  * Logout user
  */
 export async function logout() {

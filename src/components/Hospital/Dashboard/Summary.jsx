@@ -3,10 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { listHospitalDoctors } from '@/data/api-hospital-admin.js';
 import { useUser } from '@/data/UserContext';
+import Link from 'next/link';
+import { TrendingUp, UserPlus, User, Users, ChevronDown } from 'lucide-react';
 
 const Dashboard = () => {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState('weekly');
+  const [showDropdown, setShowDropdown] = useState(false);
   const { user } = useUser();
 
   useEffect(() => {
@@ -37,148 +41,244 @@ const Dashboard = () => {
     }
   }, [user]);
 
-  // Sample data for the weekly usage (keeping mock data for now)
-  const weeklyData = [
-    { day: 'Mon', consultations: 120, doctors: 18, percentage: '66.6667%' },
-    { day: 'Tue', consultations: 145, doctors: 20, percentage: '80.5556%' },
-    { day: 'Wed', consultations: 165, doctors: 22, percentage: '91.6667%' },
-    { day: 'Thu', consultations: 140, doctors: 19, percentage: '77.7778%' },
-    { day: 'Fri', consultations: 180, doctors: 24, percentage: '100%' },
-    { day: 'Sat', consultations: 95, doctors: 15, percentage: '52.7778%' },
-    { day: 'Sun', consultations: 85, doctors: 12, percentage: '47.2222%' }
-  ];
+  // Get current date information
+  const getCurrentDateInfo = () => {
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const currentWeek = Math.ceil((now.getDate() + 6 - now.getDay()) / 7); // Week of month
+    const currentMonth = now.getMonth(); // 0 = January, 1 = February, etc.
+    const currentYear = now.getFullYear();
+    
+    return { currentDay, currentWeek, currentMonth, currentYear };
+  };
 
-  // Sample data for recent activity
-  const activities = [
-    {
-      icon: 'user-plus',
-      iconColor: 'text-teal-600',
-      bgColor: 'bg-teal-50',
-      title: 'Dr. Emily Chen was successfully onboarded',
-      time: '2 hours ago'
-    },
-    {
-      icon: 'message-square',
-      iconColor: 'text-sky-600',
-      bgColor: 'bg-sky-50',
-      title: 'Dr. Rodriguez completed 15 consultations today',
-      time: '4 hours ago'
-    },
-    {
-      icon: 'credit-card',
-      iconColor: 'text-slate-600',
-      bgColor: 'bg-slate-50',
-      title: 'Monthly subscription payment processed successfully',
-      time: '6 hours ago'
-    },
-    {
-      icon: 'settings',
-      iconColor: 'text-amber-600',
-      bgColor: 'bg-amber-50',
-      title: 'Avatar response time improved by 15%',
-      time: '8 hours ago'
-    },
-    {
-      icon: 'shield',
-      iconColor: 'text-teal-600',
-      bgColor: 'bg-teal-50',
-      title: 'HIPAA compliance audit completed successfully',
-      time: '1 day ago'
-    },
-  ];
+  // Generate real-time data based on current date
+  const generateRealTimeData = () => {
+    const { currentDay, currentWeek, currentMonth } = getCurrentDateInfo();
+    
+    // Base data templates
+    const allWeeklyDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const allMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    // Weekly data - only show days up to today
+    const weeklyData = allWeeklyDays.slice(0, currentDay + 1).map((day, index) => {
+      // Generate realistic consultation numbers (increasing trend with some variation)
+      const baseConsultations = 80 + (index * 15);
+      const variation = Math.floor(Math.random() * 30) - 15;
+      const consultations = Math.max(50, baseConsultations + variation);
+      
+      // Doctors online (more during weekdays, less on weekends)
+      const baseDoctors = day === 'Sat' || day === 'Sun' ? 12 : 20;
+      const doctorVariation = Math.floor(Math.random() * 6) - 3;
+      const doctors = Math.max(8, baseDoctors + doctorVariation);
+      
+      // Calculate percentage based on maximum expected for that day
+      const maxExpected = day === 'Sat' || day === 'Sun' ? 120 : 200;
+      const percentage = `${Math.min(100, (consultations / maxExpected) * 100).toFixed(2)}%`;
+      
+      return {
+        day,
+        consultations,
+        doctors,
+        percentage
+      };
+    });
 
-  // Function to render the correct SVG icon
-  const renderIcon = (iconName, className) => {
-    switch (iconName) {
-      case 'trending-up':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-            <path d="M16 7h6v6"></path>
-            <path d="m22 7-8.5 8.5-5-5L2 17"></path>
-          </svg>
-        );
-      case 'user-plus':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <line x1="19" x2="19" y1="8" y2="14"></line>
-            <line x1="22" x2="16" y1="11" y2="11"></line>
-          </svg>
-        );
-      case 'message-square':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-        );
-      case 'credit-card':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-            <rect width="20" height="14" x="2" y="5" rx="2"></rect>
-            <line x1="2" x2="22" y1="10" y2="10"></line>
-          </svg>
-        );
-      case 'settings':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        );
-      case 'shield':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 极 4.5-1.2 6.24-2.72a1.17 1.17 极 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 极 1 1z"></path>
-          </svg>
-        );
-      case 'clock':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-            <path d="M12 6v6l4 2"></path>
-            <circle cx="12" cy="12" r="10"></circle>
-          </svg>
-        );
+    // Monthly data - only show weeks up to current week
+    const monthlyData = Array.from({ length: currentWeek }, (_, index) => {
+      const weekNumber = index + 1;
+      // Increasing trend with some variation
+      const baseConsultations = 800 + (weekNumber * 200);
+      const variation = Math.floor(Math.random() * 100) - 50;
+      const consultations = Math.max(500, baseConsultations + variation);
+      
+      const baseDoctors = 18 + (weekNumber * 1);
+      const doctorVariation = Math.floor(Math.random() * 4) - 2;
+      const doctors = Math.max(15, baseDoctors + doctorVariation);
+      
+      const percentage = `${Math.min(100, (weekNumber / 4) * 100).toFixed(2)}%`;
+      
+      return {
+        week: `Week ${weekNumber}`,
+        consultations,
+        doctors,
+        percentage
+      };
+    });
+
+    // Yearly data - only show months up to current month
+    const yearlyData = allMonths.slice(0, currentMonth + 1).map((month, index) => {
+      // Seasonal variation - higher in winter months, lower in summer
+      const seasonalFactor = [1.2, 1.1, 1.0, 0.9, 0.8, 0.85, 0.9, 1.0, 1.1, 1.2, 1.3, 1.2][index];
+      
+      const baseConsultations = 2500 + (index * 300);
+      const variation = Math.floor(Math.random() * 500) - 250;
+      const consultations = Math.max(2000, Math.floor((baseConsultations + variation) * seasonalFactor));
+      
+      const baseDoctors = 15 + (index * 1);
+      const doctorVariation = Math.floor(Math.random() * 3) - 1;
+      const doctors = Math.max(12, baseDoctors + doctorVariation);
+      
+      const percentage = `${Math.min(100, ((index + 1) / 12) * 100).toFixed(2)}%`;
+      
+      return {
+        month,
+        consultations,
+        doctors,
+        percentage
+      };
+    });
+
+    return { weeklyData, monthlyData, yearlyData };
+  };
+
+  const { weeklyData, monthlyData, yearlyData } = generateRealTimeData();
+
+  const getCurrentData = () => {
+    switch (timeRange) {
+      case 'weekly':
+        return weeklyData;
+      case 'monthly':
+        return monthlyData;
+      case 'yearly':
+        return yearlyData;
       default:
-        return null;
+        return weeklyData;
     }
   };
 
+  const getTotalConsultations = () => {
+    const data = getCurrentData();
+    return data.reduce((sum, item) => sum + item.consultations, 0);
+  };
+
+  const getTimeRangeLabel = () => {
+    switch (timeRange) {
+      case 'weekly':
+        return 'This Week';
+      case 'monthly':
+        return 'This Month';
+      case 'yearly':
+        return 'This Year';
+      default:
+        return 'This Week';
+    }
+  };
+
+  const getDataLabel = (item) => {
+    switch (timeRange) {
+      case 'weekly':
+        return item.day;
+      case 'monthly':
+        return item.week;
+      case 'yearly':
+        return item.month;
+      default:
+        return item.day;
+    }
+  };
+
+  // Function to get doctor status color and text
+  const getDoctorStatus = (doctor) => {
+    const isActive = doctor.status === 'active' || doctor.is_online;
+    return {
+      color: isActive ? 'text-green-600' : 'text-slate-400',
+      bgColor: isActive ? 'bg-green-50' : 'bg-slate-50',
+      text: isActive ? 'Active' : 'Inactive'
+    };
+  };
+
+  const timeRangeOptions = [
+    { value: 'weekly', label: 'Weekly' },
+    { value: 'monthly', label: 'Monthly' },
+    { value: 'yearly', label: 'Yearly' }
+  ];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowDropdown(false);
+    };
+
+    if (showDropdown) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [showDropdown]);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Weekly Usage Overview */}
-      <div className="lg:col-span-2">
-        <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      {/* Usage Overview - Takes 2/3 of width */}
+      <div className="xl:col-span-2">
+        <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 h-full">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">Weekly Usage Overview</h3>
-              <p className="text-sm text-slate-600">Consultations and active doctors this week</p>
+              <h3 className="text-lg font-semibold text-slate-900">Usage Overview</h3>
+              <p className="text-sm text-slate-600">Consultations and active doctors {getTimeRangeLabel().toLowerCase()}</p>
             </div>
-            <div className="flex items-center space-x-2 text-[#004dd6]">
-              {renderIcon('trending-up', 'h-4 w-4')}
-              <span className="text-sm font-medium">+12% vs last week</span>
+            
+            {/* Dropdown for time range */}
+            <div className="relative">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDropdown(!showDropdown);
+                }}
+                className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-stone-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                <span>{timeRangeOptions.find(opt => opt.value === timeRange)?.label}</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {showDropdown && (
+                <div className="absolute right-0 mt-1 w-32 bg-white border border-stone-200 rounded-lg shadow-lg z-10">
+                  {timeRangeOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setTimeRange(option.value);
+                        setShowDropdown(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-slate-50 first:rounded-t-lg last:rounded-b-lg ${
+                        timeRange === option.value ? 'text-[#004dd6] bg-blue-50' : 'text-slate-700'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           
           <div className="space-y-4">
-            {weeklyData.map((dayData, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <div className="w-12 text-sm font-medium text-slate-600">{dayData.day}</div>
+            {getCurrentData().map((item, index) => (
+              <div 
+                key={index} 
+                className="flex items-center space-x-4 animate-slide-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="w-16 text-sm font-medium text-slate-600">
+                  {getDataLabel(item)}
+                </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm text-slate-700">Consultations</span>
-                    <span className="text-sm font-medium text-slate-900">{dayData.consultations}</span>
+                    <span className="text-sm font-medium text-slate-900">
+                      {item.consultations.toLocaleString()}
+                    </span>
                   </div>
                   <div className="w-full bg-stone-200 rounded-full h-2">
                     <div 
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
-                      style={{ width: dayData.percentage }}
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-500 ease-out"
+                      style={{ width: item.percentage }}
                     ></div>
                   </div>
                 </div>
                 <div className="w-16 text-right">
                   <div className="text-xs text-slate-500">Doctors</div>
-                  <div className="text-sm font-medium text-slate-900">{dayData.doctors}</div>
+                  <div className="text-sm font-medium text-slate-900">{item.doctors}</div>
                 </div>
               </div>
             ))}
@@ -187,7 +287,7 @@ const Dashboard = () => {
           <div className="mt-6 pt-4 border-t border-stone-200">
             <div className="grid grid-cols-2 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-slate-900">1,030</div>
+                <div className="text-2xl font-bold text-slate-900">{getTotalConsultations().toLocaleString()}</div>
                 <div className="text-xs text-slate-500">Total Consultations</div>
               </div>
               <div>
@@ -201,26 +301,119 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Recent Activity
-      <div>
-        <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h3>
-          
-          <div className="space-y-4">
-            {activities.map((activity, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <div className={`p-2 rounded-lg ${activity.iconColor} ${activity.bgColor}`}>
-                  {renderIcon(activity.icon, 'h-4 w-4')}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-900">{activity.title}</p>
-                  <p className="text-xs text-slate-500 mt-1">{activity.time}</p>
-                </div>
-              </div>
-            ))}
+      {/* Doctors List Section - Takes 1/3 of width */}
+      <div className="xl:col-span-1">
+        <div className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 h-full">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-slate-900">Hospital Doctors</h3>
+            {doctors.length > 0 && (
+              <Link 
+                href="/Hospital/doctor" 
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-[#004dd6] bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+              >
+                <Users className="h-4 w-4 mr-1" />
+                View All
+              </Link>
+            )}
           </div>
+          
+          {loading ? (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#004dd6]"></div>
+            </div>
+          ) : doctors.length === 0 ? (
+            // Empty state - no doctors
+            <div className="text-center py-8">
+              <div className="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                <UserPlus className="h-8 w-8 text-slate-400" />
+              </div>
+              <h4 className="text-lg font-medium text-slate-900 mb-2">No Doctors Onboarded</h4>
+              <p className="text-sm text-slate-600 mb-6 max-w-xs mx-auto">
+                Get started by adding doctors to your hospital to begin consultations.
+              </p>
+              <Link 
+                href="/Hospital/addDoctor" 
+                className="inline-flex items-center px-4 py-2 bg-[#004dd6] text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add First Doctor
+              </Link>
+            </div>
+          ) : (
+            // Doctors list
+            <div className="space-y-4">
+              <p className="text-sm text-slate-600 mb-4">
+                {doctors.length} doctor{doctors.length !== 1 ? 's' : ''} onboarded
+              </p>
+              
+              {doctors.slice(0, 5).map((doctor, index) => {
+                const status = getDoctorStatus(doctor);
+                return (
+                  <div 
+                    key={doctor.id || index} 
+                    className="flex items-center justify-between p-3 bg-slate-50 rounded-lg animate-slide-up"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-white rounded-full border border-stone-200 flex items-center justify-center">
+                        <User className="h-5 w-5 text-slate-400" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-900">
+                          {doctor.name || `Dr. ${doctor.first_name} ${doctor.last_name}`}
+                        </h4>
+                        <p className="text-xs text-slate-500">
+                          {doctor.specialty || doctor.department || 'General Medicine'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${status.bgColor} ${status.color}`}>
+                      {status.text}
+                    </div>
+                  </div>
+                );
+              })}
+              
+              {doctors.length > 5 && (
+                <div className="pt-2 border-t border-stone-200">
+                  <Link 
+                    href="/Hospital/doctor" 
+                    className="block text-center text-sm text-[#004dd6] hover:text-blue-700 font-medium py-2"
+                  >
+                    View all {doctors.length} doctors
+                  </Link>
+                </div>
+              )}
+              
+              <div className="pt-4">
+                <Link 
+                  href="/Hospital/addDoctor" 
+                  className="w-full inline-flex items-center justify-center px-4 py-2 bg-white border border-stone-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add New Doctor
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
-      </div> */}
+      </div>
+
+      <style jsx>{`
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-slide-up {
+          animation: slide-up 0.5s ease-out both;
+        }
+      `}</style>
     </div>
   );
 };

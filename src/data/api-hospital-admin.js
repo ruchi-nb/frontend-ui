@@ -79,6 +79,13 @@ export function deleteSpeciality(hospitalId, id) {
 // =============================================
 
 /**
+ * Get all doctors (for admin purposes)
+ */
+export async function getAllDoctors() {
+  return request('/doctors', { method: "GET" });
+}
+
+/**
  * List hospital doctors
  */
 export function listHospitalDoctors(hospitalId) {
@@ -129,28 +136,28 @@ export async function getPermissionsCatalog() {
  * Get hospital by ID
  */
 export async function getHospitalById(hospitalId) {
-  return request(`/api/hospitals/${hospitalId}`, { method: "GET" });
+  return request(`/hospitals/${hospitalId}`, { method: "GET" });
 }
 
 /**
  * Get hospital users
  */
 export async function getHospitalUsers(hospitalId) {
-  return request(`/api/hospitals/${hospitalId}/users`, { method: "GET" });
+  return request(`/hospitals/${hospitalId}/users`, { method: "GET" });
 }
 
 /**
  * Get hospital roles
  */
 export async function getHospitalRoles(hospitalId) {
-  return request(`/api/hospitals/${hospitalId}/roles`, { method: "GET" });
+  return request(`/hospitals/${hospitalId}/roles`, { method: "GET" });
 }
 
 /**
  * Create hospital role
  */
 export async function createHospitalRole(hospitalId, roleData) {
-  return request(`/api/hospitals/${hospitalId}/roles`, {
+  return request(`/hospital-admin/hospitals/${hospitalId}/roles`, {
     method: "POST",
     body: JSON.stringify(roleData)
   });
@@ -160,14 +167,14 @@ export async function createHospitalRole(hospitalId, roleData) {
  * Get specific hospital role
  */
 export async function getHospitalRole(hospitalId, roleId) {
-  return request(`/api/hospitals/${hospitalId}/roles/${roleId}`, { method: "GET" });
+  return request(`/hospitals/${hospitalId}/roles/${roleId}`, { method: "GET" });
 }
 
 /**
  * Update hospital role
  */
 export async function updateHospitalRole(hospitalId, roleId, roleData) {
-  return request(`/api/hospitals/${hospitalId}/roles/${roleId}`, {
+  return request(`/hospitals/${hospitalId}/roles/${roleId}`, {
     method: "PUT",
     body: JSON.stringify(roleData)
   });
@@ -177,21 +184,21 @@ export async function updateHospitalRole(hospitalId, roleId, roleData) {
  * Delete hospital role
  */
 export async function deleteHospitalRole(hospitalId, roleId) {
-  return request(`/api/hospitals/${hospitalId}/roles/${roleId}`, { method: "DELETE" });
+  return request(`/hospitals/${hospitalId}/roles/${roleId}`, { method: "DELETE" });
 }
 
 /**
  * Get role permissions
  */
 export async function getRolePermissions(hospitalId, roleId) {
-  return request(`/api/hospitals/${hospitalId}/roles/${roleId}/permissions`, { method: "GET" });
+  return request(`/hospitals/${hospitalId}/roles/${roleId}/permissions`, { method: "GET" });
 }
 
 /**
  * Set role permissions
  */
 export async function setRolePermissions(hospitalId, roleId, permissionNames) {
-  return request(`/api/hospitals/${hospitalId}/roles/${roleId}/permissions`, {
+  return request(`/hospital-admin/hospitals/${hospitalId}/roles/${roleId}/permissions`, {
     method: "PUT",
     body: JSON.stringify({ permission_names: permissionNames })
   });
@@ -201,7 +208,7 @@ export async function setRolePermissions(hospitalId, roleId, permissionNames) {
  * Add permission to role
  */
 export async function addRolePermission(hospitalId, roleId, permissionKey) {
-  return request(`/api/hospitals/${hospitalId}/roles/${roleId}/permissions/${permissionKey}`, {
+  return request(`/hospitals/${hospitalId}/roles/${roleId}/permissions/${permissionKey}`, {
     method: "POST"
   });
 }
@@ -210,7 +217,7 @@ export async function addRolePermission(hospitalId, roleId, permissionKey) {
  * Remove permission from role
  */
 export async function removeRolePermission(hospitalId, roleId, permissionKey) {
-  return request(`/api/hospitals/${hospitalId}/roles/${roleId}/permissions/${permissionKey}`, {
+  return request(`/hospitals/${hospitalId}/roles/${roleId}/permissions/${permissionKey}`, {
     method: "DELETE"
   });
 }
@@ -219,14 +226,14 @@ export async function removeRolePermission(hospitalId, roleId, permissionKey) {
  * Get user roles
  */
 export async function getUserRoles(hospitalId, userId) {
-  return request(`/api/hospitals/${hospitalId}/users/${userId}/roles`, { method: "GET" });
+  return request(`/hospitals/${hospitalId}/users/${userId}/roles`, { method: "GET" });
 }
 
 /**
  * Assign role to user
  */
 export async function assignUserRole(hospitalId, userId, roleId) {
-  return request(`/api/hospitals/${hospitalId}/users/${userId}/roles`, {
+  return request(`/hospitals/${hospitalId}/users/${userId}/roles`, {
     method: "POST",
     body: JSON.stringify({ role_id: roleId })
   });
@@ -236,7 +243,7 @@ export async function assignUserRole(hospitalId, userId, roleId) {
  * Update user role
  */
 export async function updateUserRole(hospitalId, userId, roleId, isActive) {
-  return request(`/api/hospitals/${hospitalId}/users/${userId}/roles/${roleId}`, {
+  return request(`/hospitals/${hospitalId}/users/${userId}/roles/${roleId}`, {
     method: "PUT",
     body: JSON.stringify({ is_active: isActive })
   });
@@ -246,7 +253,7 @@ export async function updateUserRole(hospitalId, userId, roleId, isActive) {
  * Delete user role
  */
 export async function deleteUserRole(hospitalId, userId, roleId) {
-  return request(`/api/hospitals/${hospitalId}/users/${userId}/roles/${roleId}`, {
+  return request(`/hospitals/${hospitalId}/users/${userId}/roles/${roleId}`, {
     method: "DELETE"
   });
 }
@@ -255,7 +262,7 @@ export async function deleteUserRole(hospitalId, userId, roleId) {
  * Get users with specific role
  */
 export async function getUsersWithRole(hospitalId, roleId) {
-  return request(`/api/hospitals/${hospitalId}/roles/${roleId}/users`, { method: "GET" });
+  return request(`/hospitals/${hospitalId}/roles/${roleId}/users`, { method: "GET" });
 }
 
 // =============================================
@@ -270,8 +277,25 @@ export async function getAllHospitals() {
 }
 
 /**
- * Get all doctors
+ * Create user with any role (default or custom) - Unified function
  */
-export async function getAllDoctors() {
-  return request("/search/doctors", { method: "GET" });
+export async function createHospitalUser(hospitalId, payload) {
+  return request(`/hospital-admin/hospitals/${hospitalId}/users`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+/**
+ * List hospital nurses (placeholder - implement based on your API)
+ */
+export async function listHospitalNurses(hospitalId) {
+  return request(withQuery("/hospitals/nurses", { hospital_id: hospitalId }), { method: "GET" });
+}
+
+/**
+ * List hospital patients (placeholder - implement based on your API)
+ */
+export async function listHospitalPatients(hospitalId) {
+  return request(withQuery("/hospitals/patients", { hospital_id: hospitalId }), { method: "GET" });
 }

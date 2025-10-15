@@ -81,7 +81,12 @@ export async function checkBackendHealth() {
 // Enhanced request function with better error handling
 async function request(path, options = {}, { withAuth = true } = {}) {
   const url = `${API_BASE}${path}`;
-  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+  
+  // Handle FormData vs JSON content type
+  const isFormData = options.body instanceof FormData;
+  const headers = isFormData 
+    ? { ...(options.headers || {}) } // Don't set Content-Type for FormData
+    : { "Content-Type": "application/json", ...(options.headers || {}) };
 
   if (withAuth) {
     const { accessToken } = getStoredTokens();
@@ -91,7 +96,7 @@ async function request(path, options = {}, { withAuth = true } = {}) {
   try {
     console.log("Making request to:", url);
     console.log("Request headers:", headers);
-    console.log("Request body:", options.body);
+    console.log("Request body:", isFormData ? "[FormData]" : options.body);
     
     const fetchOptions = { ...options, headers };
     console.log("Fetch options:", fetchOptions);
@@ -129,14 +134,39 @@ async function handleResponse(res) {
   console.log("Response status:", res.status);
   
   if (!res.ok) {
-    const message = (data && (data.detail || data.message)) || res.statusText;
-    console.log("Error message:", message);
-    console.log("Error data:", data);
-    const error = new Error(message);
-    error.status = res.status;
-    error.data = data;
-    throw error;
+  let message = res.statusText;
+
+  if (data) {
+    if (typeof data === "string") {
+      message = data;
+    } else if (Array.isArray(data)) {
+      // Handle arrays of errors (e.g. validation errors)
+      message = data.map(err => err.msg || JSON.stringify(err)).join(", ");
+    } else if (data.detail) {
+      // Sometimes detail can be a string or array
+      if (Array.isArray(data.detail)) {
+        message = data.detail.map(d => d.msg || JSON.stringify(d)).join(", ");
+      } else if (typeof data.detail === "object") {
+        message = data.detail.msg || JSON.stringify(data.detail);
+      } else {
+        message = data.detail;
+      }
+    } else if (data.message) {
+      message = data.message;
+    } else {
+      // fallback: stringify entire object
+      message = JSON.stringify(data);
+    }
   }
+
+  console.log("❌ Error message:", message);
+  console.log("❌ Error data:", data);
+
+  const error = new Error(message);
+  error.status = res.status;
+  error.data = data;
+  throw error;
+}
   return data;
 }
 
@@ -314,3 +344,6 @@ export function clearHospitalId() {
   if (typeof window === "undefined") return;
   localStorage.removeItem("hospital_id");
 }
+
+// Re-export commonly used functions to fix import errors
+export { getAllHospitals, getAllDoctors } from './api-hospital-admin.js';

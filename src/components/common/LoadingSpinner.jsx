@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import { LifeLine } from 'react-loading-indicators';
 
 const LoadingSpinner = ({ 
   size = 'md', 
@@ -8,27 +9,29 @@ const LoadingSpinner = ({
   fullScreen = false,
   className = '' 
 }) => {
-  const sizeClasses = {
-    sm: 'w-4 h-4',
-    md: 'w-8 h-8',
-    lg: 'w-12 h-12',
-    xl: 'w-16 h-16'
+  const sizeMap = {
+    sm: 'small',
+    md: 'medium',
+    lg: 'large',
+    xl: 'large'
   };
 
-  const colorClasses = {
-    blue: 'text-blue-600',
-    white: 'text-white',
-    gray: 'text-gray-600',
-    green: 'text-green-600',
-    red: 'text-red-600'
+  const colorMap = {
+    blue: '#3b82f6',
+    white: '#ffffff',
+    gray: '#6b7280',
+    green: '#10b981',
+    red: '#ef4444'
   };
 
   const spinner = (
     <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div className={`animate-spin rounded-full border-2 border-gray-300 border-t-current ${sizeClasses[size]} ${colorClasses[color]}`}></div>
-      {text && (
-        <p className={`mt-2 text-sm ${colorClasses[color]}`}>{text}</p>
-      )}
+      <LifeLine
+        color={colorMap[color]}
+        size={sizeMap[size]}
+        text={text}
+        textColor={colorMap[color]}
+      />
     </div>
   );
 
